@@ -144,31 +144,34 @@ async function startWASocket() {
 
 // Dynamic Contextual AI Engine (Real AI & Intelligence)
 async function generateSmartAiReply(userText, promptText) {
-  // 1. If Google Gemini API Key is provided, use Google Gemini 1.5 Flash live!
+  // 1. If Google Gemini API Key is provided, use Google Gemini API Live!
   const geminiKey = botState.geminiApiKey || process.env.GEMINI_API_KEY;
   if (geminiKey && geminiKey.trim()) {
-    try {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey.trim()}`;
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [
-            {
-              role: 'user',
-              parts: [{ text: `System Instructions: ${promptText}\nIMPORTANT: Always reply in the exact language used by the client (Darija, French, English, Arabic, Spanish, etc.) and keep the response concise for WhatsApp.\n\nClient Message: ${userText}` }]
-            }
-          ]
-        })
-      });
-      const data = await response.json();
-      const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (replyText) {
-        console.log('✨ Replied using Google Gemini API Live!');
-        return replyText;
+    const activeModels = ['gemini-flash-lite-latest', 'gemini-3.8-flash', 'gemini-3.5-flash-lite', 'gemini-2.5-flash', 'gemini-1.5-flash'];
+    for (const mModel of activeModels) {
+      try {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${mModel}:generateContent?key=${geminiKey.trim()}`;
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [
+              {
+                role: 'user',
+                parts: [{ text: `System Instructions: ${promptText}\nIMPORTANT: Always reply in the exact language used by the client (Darija, French, English, Arabic, Spanish, etc.) and keep the response concise for WhatsApp.\n\nClient Message: ${userText}` }]
+              }
+            ]
+          })
+        });
+        const data = await response.json();
+        const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (replyText) {
+          console.log(`✨ Replied using Google Gemini API (${mModel}) Live!`);
+          return replyText;
+        }
+      } catch (err) {
+        console.error(`Gemini live API call error (${mModel}):`, err.message);
       }
-    } catch (err) {
-      console.error('Gemini live API call error:', err.message);
     }
   }
 
