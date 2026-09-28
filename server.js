@@ -147,7 +147,7 @@ async function generateSmartAiReply(userText, promptText) {
   // 1. If Google Gemini API Key is provided, use Google Gemini API Live!
   const geminiKey = botState.geminiApiKey || process.env.GEMINI_API_KEY;
   if (geminiKey && geminiKey.trim()) {
-    const activeModels = ['gemini-3.5-flash-lite', 'gemini-flash-lite-latest', 'gemini-3.8-flash', 'gemini-3.5-flash', 'gemini-1.5-flash'];
+    const activeModels = ['gemini-flash-lite-latest', 'gemini-3.5-flash-lite', 'gemini-3.8-flash', 'gemini-3.5-flash', 'gemini-1.5-flash'];
     for (const mModel of activeModels) {
       try {
         const url = `https://generativelanguage.googleapis.com/v1beta/models/${mModel}:generateContent?key=${geminiKey.trim()}`;
@@ -155,10 +155,13 @@ async function generateSmartAiReply(userText, promptText) {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
+            systemInstruction: {
+              parts: [{ text: `${promptText}\nIMPORTANT: Always reply in the exact language used by the client (Moroccan Darija, French, English, Arabic, Spanish, etc.) and keep the response concise for WhatsApp.` }]
+            },
             contents: [
               {
                 role: 'user',
-                parts: [{ text: `System Instructions: ${promptText}\nIMPORTANT: Always reply in the exact language used by the client (Darija, French, English, Arabic, Spanish, etc.) and keep the response concise for WhatsApp.\n\nClient Message: ${userText}` }]
+                parts: [{ text: userText }]
               }
             ]
           })
@@ -206,7 +209,7 @@ async function generateSmartAiReply(userText, promptText) {
   // 3. High-Intelligence Contextual Reasoner & Entity Extractor Fallback
   const txt = userText.toLowerCase().trim();
   const isArabicScript = /[\u0600-\u06FF]/.test(userText);
-  const isDarija = txt.includes('salam') || txt.includes('slm') || txt.includes('bghit') || txt.includes('ch7al') || txt.includes('kifach') || txt.includes('fin') || txt.includes('afak') || txt.includes('daba') || txt.includes('comandi') || txt.includes('lkhdma') || txt.includes('bch7al') || txt.includes('khdo') || txt.includes('wach') || txt.includes('n3awnek') || txt.includes('tbarkallah');
+  const isDarija = txt.includes('salam') || txt.includes('slm') || txt.includes('bghit') || txt.includes('ch7al') || txt.includes('kifach') || txt.includes('fin') || txt.includes('afak') || txt.includes('daba') || txt.includes('comandi') || txt.includes('lkhdma') || txt.includes('bch7al') || txt.includes('khdo') || txt.includes('wach') || txt.includes('n3awnek') || txt.includes('tbarkallah') || txt.includes('nta') || txt.includes('cv') || txt.includes('dwi');
   const isEnglish = txt.includes('hello') || txt.includes('hi ') || txt.startsWith('hi') || txt.includes('how ') || txt.includes('price') || txt.includes('much') || txt.includes('order') || txt.includes('shipping') || txt.includes('thanks') || txt.includes('thank') || txt.includes('can ') || txt.includes('want');
   const isSpanish = txt.includes('hola') || txt.includes('cuanto') || txt.includes('precio') || txt.includes('gracias') || txt.includes('comprar');
 
@@ -220,79 +223,57 @@ async function generateSmartAiReply(userText, promptText) {
   if (isArabicScript) {
     let detailsStr = '';
     if (detectedCity) detailsStr += ` إلى مدينة ${detectedCity}`;
-    if (numbersDetail) detailsStr += ` (التفاصيل الرقمية: ${numbersDetail})`;
 
     if (txt.includes('تأكيد') || txt.includes('طلب') || txt.includes('أشتري') || txt.includes('حجز') || txt.includes('شراء')) {
-      return `مرحباً بك! 🎉 لقد فهمت طلبك بالكامل لتأكيد الشراء${detailsStr}. تم تسجيل الطلب بنجاح على لوحة التحكم بالبث المباشر (Live Dashboard). سنتواصل معك قريباً للتسليم! 🚚`;
+      return `مرحباً بك! 🎉 تم فهم طلبك بالكامل لتأكيد الشراء${detailsStr}. تم تسجيل الطلب بنجاح على لوحة التحكم بالبث المباشر (Live Dashboard). سنتواصل معك قريباً للتسليم! 🚚`;
     }
     if (txt.includes('سعر') || txt.includes('ثمن') || txt.includes('بكم') || txt.includes('تكلفة')) {
-      return `مرحباً بك! 💎 بخصوص استفسارك عن الأسعار${detailsStr}: تبدأ باقاتنا من 990 درهم/شهرياً للباقة الأساسية و 1990 درهم للباقة الاحترافية. هل ترغب في تفعيل طلبك؟`;
+      return `مرحباً بك! 💎 بخصوص استفسارك عن الأسعار: تبدأ باقاتنا من 990 درهم/شهرياً للباقة الأساسية و 1990 درهم للباقة الاحترافية. هل ترغب في تفعيل طلبك؟`;
     }
     if (txt.includes('توصيل') || txt.includes('شحن') || txt.includes('أمانة') || txt.includes('مدة')) {
       return `أهلاً بك! 🚚 التوصيل إلى ${detectedCity || 'جميع مدن المغرب'} يتم خلال 24 إلى 48 ساعة فقط. الدفع نقداً عند الاستلام بعد المعاينة!`;
     }
-    return `أهلاً بك! لقد حلل الذكاء الاصطناعي رسالتك: "${userText}"${detailsStr}. نحن في خدمتك 24/7، هل ترغب في الاستفسار عن منتج معين أو تقديم طلب؟`;
+    return `أهلاً وسهلاً بك! 🇲🇦 أنا مساعدك الذكي 24/7. كيف يمكنني خدمتك اليوم؟`;
   }
 
   // MOROCCAN DARIJA REASONING
   if (isDarija) {
     let detailsStr = '';
     if (detectedCity) detailsStr += ` l'madinat ${detectedCity}`;
-    if (numbersDetail) detailsStr += ` (les détails: ${numbersDetail})`;
 
     if (txt.includes('confirm') || txt.includes('comandi') || txt.includes('commander') || txt.includes('pointure') || txt.includes('bghit nachri') || txt.includes('khdo') || txt.includes('valider')) {
       return `Salam Alaykoum ! 🎉 Fhemt l'commande dyalak b l'kamil${detailsStr} ! Tsajlat l'commande dyalak f l'Dashboard en direct w l'livreur ghadi ytassal bik f a9rab wa9t. Shokran 3la thi9a dyalak ! ✨`;
     }
     if (txt.includes('prix') || txt.includes('ch7al') || txt.includes('bch7al') || txt.includes('tarif')) {
-      return `Salam Alaykoum ! 💎 B khsos l'prix dyal l'produit/service dyalna${detailsStr}: kaybdaw mn 990 DH/chhr ! Wach bghiti nssajlo l'commande dyalak daba ?`;
+      return `Salam Alaykoum ! 💎 B khsos l'prix dyal l'produit/service dyalna: kaybdaw mn 990 DH/chhr ! Wach bghiti nssajlo l'commande dyalak daba ?`;
     }
     if (txt.includes('livraison') || txt.includes('fin') || txt.includes('twsil') || txt.includes('amana')) {
       return `Marhaba bick ! 🚚 L'livraison katkon f 24h tal 48h f ${detectedCity || 'ga3 l\'modon dyal l\'maghrib'}. L'khalas kaykon mlli tstalam w tvérifier l'produit dyalak !`;
     }
-    return `Salam Alaykoum ! L'bot IA dyalna fhem l'message dyalak: "${userText}"${detailsStr}. Kifach n9dar n3awnek 9tr f l'commande dyalak ? 🤖`;
+    return `Wa Alaykoum Assalam ! 🇲🇦 Labas 3lik ? Kifach n9dar n3awnek lyoum f l'commande wala l'istifsar dyalak ? 🤖`;
   }
 
   // ENGLISH REASONING
   if (isEnglish) {
-    let detailsStr = '';
-    if (detectedCity) detailsStr += ` for delivery to ${detectedCity}`;
-    if (numbersDetail) detailsStr += ` (details: ${numbersDetail})`;
-
     if (txt.includes('confirm') || txt.includes('order') || txt.includes('buy') || txt.includes('reserve')) {
-      return `Hello! 🎉 I have fully understood your request${detailsStr}. Your order has been registered live on the Dashboard! Our team will contact you shortly for dispatch. 🚚`;
+      return `Hello! 🎉 Your order has been successfully registered live on the Dashboard! Our team will contact you shortly for dispatch. 🚚`;
     }
     if (txt.includes('price') || txt.includes('much') || txt.includes('cost') || txt.includes('rate')) {
-      return `Hello! 💎 Regarding your pricing request${detailsStr}: Our plans start at 990 MAD/month. Would you like to proceed with your order?`;
+      return `Hello! 💎 Our AI WhatsApp plans start at 990 MAD/month. Would you like to proceed with your order?`;
     }
-    if (txt.includes('shipping') || txt.includes('delivery') || txt.includes('where')) {
-      return `Hello! 🚚 We offer fast 24h-48h delivery to ${detectedCity || 'all cities in Morocco'} with cash on delivery!`;
-    }
-    return `Hello! The AI has processed your message: "${userText}"${detailsStr}. How can we assist you further with your purchase or inquiry? 🤖`;
-  }
-
-  // SPANISH REASONING
-  if (isSpanish) {
-    return `¡Hola! 🎉 He entendido tu mensaje: "${userText}". Tu solicitud ha sido procesada con éxito y se registra en vivo en el Dashboard. ¿Deseas confirmar tu pedido? 🤖`;
+    return `Hello! 👋 How can I help you today with your order or inquiry? 🤖`;
   }
 
   // FRENCH REASONING (DEFAULT)
-  let detailsStr = '';
-  if (detectedCity) detailsStr += ` à destination de ${detectedCity}`;
-  if (numbersDetail) detailsStr += ` (spécifications: ${numbersDetail})`;
-
   if (txt.includes('confirm') || txt.includes('commander') || txt.includes('pointure') || txt.includes('valider') || txt.includes('acheter')) {
-    return `Bonjour ! 🎉 J'ai parfaitement analysé votre demande${detailsStr}. Votre commande est enregistrée avec succès en DIRECT sur le Dashboard Client. Nous préparons votre livraison ! 🚚`;
+    return `Bonjour ! 🎉 Votre commande est enregistrée avec succès en DIRECT sur le Dashboard Client. Nous préparons votre livraison ! 🚚`;
   }
 
   if (txt.includes('prix') || txt.includes('tarif') || txt.includes('combien')) {
-    return `Bonjour ! 💎 Concernant votre demande de prix${detailsStr} : Nos tarifs commencent à 990 DH/mois. Souhaitez-vous que nous validions votre commande ?`;
+    return `Bonjour ! 💎 Nos tarifs commencent à 990 DH/mois. Souhaitez-vous que nous validions votre commande ?`;
   }
 
-  if (txt.includes('livraison') || txt.includes('amana') || txt.includes('delai')) {
-    return `Bonjour ! 🚚 La livraison vers ${detectedCity || 'toutes les villes du Maroc'} est effectuée sous 24h à 48h. Le paiement s'effectue à la livraison après vérification.`;
-  }
-
-  return `Bonjour ! L'intelligence artificielle a analysé votre message : "${userText}"${detailsStr}. Comment puis-je vous accompagner pour finaliser votre demande ? 🤖`;
+  return `Bonjour ! 👋 Ravi de vous accueillir. Je suis votre assistant virtuel 24h/24. En quoi puis-je vous être utile aujourd'hui ? 🤖`;
 }
 
 function broadcastState() {
