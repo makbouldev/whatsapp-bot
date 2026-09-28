@@ -30,7 +30,8 @@ let botState = {
   totalMessages: 0,
   leadsCaptured: 0,
   conversionRate: '0%',
-  openaiApiKey: process.env.OPENAI_API_KEY || ''
+  openaiApiKey: process.env.OPENAI_API_KEY || '',
+  geminiApiKey: process.env.GEMINI_API_KEY || ''
 };
 
 let liveConfirmations = [];
@@ -143,7 +144,35 @@ async function startWASocket() {
 
 // Dynamic Contextual AI Engine (Real AI & Intelligence)
 async function generateSmartAiReply(userText, promptText) {
-  // 1. If OpenAI API Key is provided, use GPT-4o-mini live!
+  // 1. If Google Gemini API Key is provided, use Google Gemini 1.5 Flash live!
+  const geminiKey = botState.geminiApiKey || process.env.GEMINI_API_KEY;
+  if (geminiKey && geminiKey.trim()) {
+    try {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey.trim()}`;
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [
+            {
+              role: 'user',
+              parts: [{ text: `System Instructions: ${promptText}\nIMPORTANT: Always reply in the exact language used by the client (Darija, French, English, Arabic, Spanish, etc.) and keep the response concise for WhatsApp.\n\nClient Message: ${userText}` }]
+            }
+          ]
+        })
+      });
+      const data = await response.json();
+      const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (replyText) {
+        console.log('✨ Replied using Google Gemini API Live!');
+        return replyText;
+      }
+    } catch (err) {
+      console.error('Gemini live API call error:', err.message);
+    }
+  }
+
+  // 2. If OpenAI API Key is provided, use GPT-4o-mini live!
   if (botState.openaiApiKey && botState.openaiApiKey.startsWith('sk-')) {
     try {
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -171,7 +200,7 @@ async function generateSmartAiReply(userText, promptText) {
     }
   }
 
-  // 2. High-Intelligence Contextual Reasoner & Entity Extractor
+  // 3. High-Intelligence Contextual Reasoner & Entity Extractor Fallback
   const txt = userText.toLowerCase().trim();
   const isArabicScript = /[\u0600-\u06FF]/.test(userText);
   const isDarija = txt.includes('salam') || txt.includes('slm') || txt.includes('bghit') || txt.includes('ch7al') || txt.includes('kifach') || txt.includes('fin') || txt.includes('afak') || txt.includes('daba') || txt.includes('comandi') || txt.includes('lkhdma') || txt.includes('bch7al') || txt.includes('khdo') || txt.includes('wach') || txt.includes('n3awnek') || txt.includes('tbarkallah');
@@ -337,6 +366,15 @@ app.post('/api/update-openai-key', (req, res) => {
   }
   broadcastState();
   res.json({ success: true, message: 'Clé API OpenAI configurée avec succès !' });
+});
+
+app.post('/api/update-gemini-key', (req, res) => {
+  if (req.body.apiKey) {
+    botState.geminiApiKey = req.body.apiKey.trim();
+    console.log('✨ Google Gemini API Key updated on live server!');
+  }
+  broadcastState();
+  res.json({ success: true, message: 'Clé API Google Gemini configurée avec succès !' });
 });
 
 wss.on('connection', (ws) => {

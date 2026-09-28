@@ -8,6 +8,7 @@ export const BotStudioTab = () => {
 
   const [prompt, setPrompt] = useState(userBot?.prompt || '');
   const [welcomeMsg, setWelcomeMsg] = useState(userBot?.welcomeMessage || '');
+  const [geminiKey, setGeminiKey] = useState('');
   const [openaiKey, setOpenaiKey] = useState('');
   const [saveSuccess, setSaveSuccess] = useState(false);
 
@@ -30,6 +31,14 @@ export const BotStudioTab = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt, welcomeMessage: welcomeMsg })
       });
+
+      if (geminiKey) {
+        await fetch(`${API_URL}/api/update-gemini-key`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ apiKey: geminiKey })
+        });
+      }
 
       if (openaiKey) {
         await fetch(`${API_URL}/api/update-openai-key`, {
@@ -151,6 +160,23 @@ export const BotStudioTab = () => {
 
             <div>
               <label className="block text-xs font-bold text-slate-300 mb-1 uppercase tracking-wider flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-wa-green" />
+                <span>Clé API Google Gemini (Gratuit & Recommandé ✨)</span>
+              </label>
+              <input
+                type="password"
+                placeholder="AIzaSy..."
+                value={geminiKey}
+                onChange={(e) => setGeminiKey(e.target.value)}
+                className="w-full bg-obsidian-card border border-obsidian-border rounded-xl px-3.5 py-2.5 text-xs text-white font-mono focus:outline-none focus:border-wa-green"
+              />
+              <p className="text-[10px] text-slate-400 mt-1">
+                Collez la clé obtenue sur <a href="https://aistudio.google.com" target="_blank" rel="noreferrer" className="text-wa-green font-bold hover:underline">Google AI Studio</a> pour activer Gemini 1.5 Flash 100% gratuitement.
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-slate-300 mb-1 uppercase tracking-wider flex items-center gap-1.5">
                 <Key className="w-3.5 h-3.5 text-wa-green" />
                 <span>Clé API OpenAI ChatGPT (Optionnel)</span>
               </label>
@@ -162,7 +188,7 @@ export const BotStudioTab = () => {
                 className="w-full bg-obsidian-card border border-obsidian-border rounded-xl px-3.5 py-2.5 text-xs text-white font-mono focus:outline-none focus:border-wa-green"
               />
               <p className="text-[10px] text-slate-500 mt-1">
-                Laissez vide pour utiliser l'IA haute performance intégrée de WaBotix.
+                Laissez vide si vous utilisez la clé Google Gemini ou le moteur intégré.
               </p>
             </div>
 
