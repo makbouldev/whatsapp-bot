@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Sliders, Save, Bot, Send, Sparkles, Check, RefreshCw, Key, MessageSquare, AlertCircle } from 'lucide-react';
 import { API_URL } from '../config';
@@ -8,8 +8,8 @@ export const BotStudioTab = () => {
 
   const [prompt, setPrompt] = useState(userBot?.prompt || '');
   const [welcomeMsg, setWelcomeMsg] = useState(userBot?.welcomeMessage || '');
-  const [geminiKey, setGeminiKey] = useState('');
-  const [openaiKey, setOpenaiKey] = useState('');
+  const [geminiKey, setGeminiKey] = useState(() => localStorage.getItem('wabotix_gemini_key') || '');
+  const [openaiKey, setOpenaiKey] = useState(() => localStorage.getItem('wabotix_openai_key') || '');
   const [saveSuccess, setSaveSuccess] = useState(false);
 
   // Live Playground Chat State
@@ -18,12 +18,36 @@ export const BotStudioTab = () => {
   ]);
   const [testInput, setTestInput] = useState('');
 
+  // Fetch initial API keys status from backend
+  useEffect(() => {
+    const fetchStatusKeys = async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/status`);
+        const data = await res.json();
+        if (data.botState?.geminiApiKey && !localStorage.getItem('wabotix_gemini_key')) {
+          setGeminiKey(data.botState.geminiApiKey);
+          localStorage.setItem('wabotix_gemini_key', data.botState.geminiApiKey);
+        }
+        if (data.botState?.openaiApiKey && !localStorage.getItem('wabotix_openai_key')) {
+          setOpenaiKey(data.botState.openaiApiKey);
+          localStorage.setItem('wabotix_openai_key', data.botState.openaiApiKey);
+        }
+      } catch (err) {
+        console.log('Status fetch keys:', err);
+      }
+    };
+    fetchStatusKeys();
+  }, []);
+
   const handleSave = async (e) => {
     e.preventDefault();
     updateBotConfig({
       prompt,
       welcomeMessage: welcomeMsg
     });
+
+    if (geminiKey) localStorage.setItem('wabotix_gemini_key', geminiKey);
+    if (openaiKey) localStorage.setItem('wabotix_openai_key', openaiKey);
 
     try {
       await fetch(`${API_URL}/api/update-prompt`, {
