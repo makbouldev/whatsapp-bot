@@ -147,7 +147,7 @@ async function generateSmartAiReply(userText, promptText) {
   // 1. If Google Gemini API Key is provided, use Google Gemini API Live!
   const geminiKey = botState.geminiApiKey || process.env.GEMINI_API_KEY;
   if (geminiKey && geminiKey.trim()) {
-    const activeModels = ['gemini-flash-lite-latest', 'gemini-3.8-flash', 'gemini-3.5-flash-lite', 'gemini-2.5-flash', 'gemini-1.5-flash'];
+    const activeModels = ['gemini-3.5-flash-lite', 'gemini-flash-lite-latest', 'gemini-3.8-flash', 'gemini-3.5-flash', 'gemini-1.5-flash'];
     for (const mModel of activeModels) {
       try {
         const url = `https://generativelanguage.googleapis.com/v1beta/models/${mModel}:generateContent?key=${geminiKey.trim()}`;
