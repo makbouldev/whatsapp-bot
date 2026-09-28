@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { CheckCircle2, ShoppingCart, Calendar, Phone, Download, Search, Sparkles, Filter } from 'lucide-react';
+import { API_URL } from '../config';
 
 export const initialConfirmations = [
   {
@@ -54,7 +55,7 @@ export const ConfirmationsFeed = () => {
 
   const fetchLiveConfirmations = async () => {
     try {
-      const res = await fetch('http://localhost:3001/api/status');
+      const res = await fetch(`${API_URL}/api/status`);
       const data = await res.json();
       if (data.liveConfirmations && data.liveConfirmations.length > 0) {
         const combined = [...data.liveConfirmations, ...initialConfirmations];

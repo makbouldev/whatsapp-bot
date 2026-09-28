@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Sliders, Save, Bot, Send, Sparkles, Check, RefreshCw, Key, MessageSquare, AlertCircle } from 'lucide-react';
+import { API_URL } from '../config';
 
 export const BotStudioTab = () => {
   const { userBot, updateBotConfig } = useAuth();
@@ -24,14 +25,14 @@ export const BotStudioTab = () => {
     });
 
     try {
-      await fetch('http://localhost:3001/api/update-prompt', {
+      await fetch(`${API_URL}/api/update-prompt`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt, welcomeMessage: welcomeMsg })
       });
 
       if (openaiKey) {
-        await fetch('http://localhost:3001/api/update-openai-key', {
+        await fetch(`${API_URL}/api/update-openai-key`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ apiKey: openaiKey })
@@ -54,7 +55,7 @@ export const BotStudioTab = () => {
     setTestMessages(prev => [...prev, { id: Date.now(), sender: 'user', text: userText }]);
 
     try {
-      const res = await fetch('http://localhost:3001/api/chat', {
+      const res = await fetch(`${API_URL}/api/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: userText })

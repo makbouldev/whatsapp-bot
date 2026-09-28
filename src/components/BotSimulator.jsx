@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Bot, Send, CheckCheck, Smartphone, Sparkles, RefreshCw, ShoppingBag, Utensils, Home, UserCheck, MessageSquarePlus, ChevronRight } from 'lucide-react';
+import { API_URL } from '../config';
 
 const scenarios = [
   {
@@ -123,7 +124,7 @@ export const BotSimulator = ({ onOpenQuoteModal }) => {
 
     try {
       // Fetch dynamic, unique AI response from backend
-      const res = await fetch('http://localhost:3001/api/chat', {
+      const res = await fetch(`${API_URL}/api/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: textToSend })

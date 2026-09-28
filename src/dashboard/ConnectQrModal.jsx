@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { X, QrCode, Smartphone, CheckCircle2, RefreshCw, Sparkles, ShieldCheck, ArrowRight, Zap } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
+import { API_URL } from '../config';
+
 export const ConnectQrModal = ({ isOpen, onClose, botName = "Bot WhatsApp", botId }) => {
   const { toggleBotStatus } = useAuth();
   const [scanStatus, setScanStatus] = useState('waiting');
@@ -11,7 +13,7 @@ export const ConnectQrModal = ({ isOpen, onClose, botName = "Bot WhatsApp", botI
   // Fetch real QR code from backend server
   const fetchBackendQr = async () => {
     try {
-      const res = await fetch('http://localhost:3001/api/status');
+      const res = await fetch(`${API_URL}/api/status`);
       const data = await res.json();
       if (data.botState?.qrCodeUrl) {
         setRealQrImage(data.botState.qrCodeUrl);
@@ -37,7 +39,7 @@ export const ConnectQrModal = ({ isOpen, onClose, botName = "Bot WhatsApp", botI
   const handleSimulateScan = async () => {
     setScanStatus('scanning');
     try {
-      await fetch('http://localhost:3001/api/simulate-scan', {
+      await fetch(`${API_URL}/api/simulate-scan`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone: '+212 661 234 567' })
