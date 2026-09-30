@@ -4,59 +4,59 @@ import { Check, Sparkles, Zap, ShieldCheck, HelpCircle, ArrowRight, Globe } from
 const plans = [
   {
     id: 'starter',
-    name: 'Starter Bot',
-    priceMonthly: 990,
-    priceAnnual: 790,
-    badge: 'Idéal Petites Entreprises',
-    description: 'Automatisez vos réponses aux questions courantes et facilitez le premier contact client.',
+    name: 'Starter Plan',
+    priceMonthly: 10,
+    priceAnnual: 8,
+    badge: 'Small Business',
+    description: 'Automate responses to common questions and ease client onboarding.',
     features: [
-      'Jusqu\'à 1 500 conversations / mois',
-      'Bot basé sur règles & mots clés',
-      'Support IA Multilingue (Toutes Langues)',
-      '1 Numéro WhatsApp connecté',
-      'Menus interactifs à boutons',
-      'Support par ticket & email (24h)'
+      'Up to 1,500 conversations / month',
+      'Rules & keyword-based bot engine',
+      'Multilingual AI Support (All Languages)',
+      '1 Connected WhatsApp Number',
+      'Interactive button menus',
+      'Email & Ticket Support (24h)'
     ],
-    ctaText: 'Choisir Starter',
+    ctaText: 'Select Starter Plan',
     popular: false
   },
   {
     id: 'pro',
-    name: 'Business Pro IA',
-    priceMonthly: 1990,
-    priceAnnual: 1590,
-    badge: 'Le Plus Populaire ⭐',
-    description: 'Pour les entreprises voulant une IA ChatGPT connectée qui vend et qualifie en direct.',
+    name: 'Business Pro AI',
+    priceMonthly: 20,
+    priceAnnual: 16,
+    badge: '⭐ Most Popular',
+    description: 'For businesses wanting a ChatGPT AI connected for live sales & leads.',
     features: [
-      'Jusqu\'à 6 000 conversations / mois',
-      'IA ChatGPT-4o entraînée sur vos produits',
-      'Catalogue E-Commerce & Prise de Commande',
-      'Relance automatique des paniers',
-      'Dashboard Multi-Agents (Human Takeover)',
-      'Campagnes Marketing Bulk (1 000 envois/m)',
-      'WhatsApp Cloud API Officielle (Badge Vert)',
-      'Support WhatsApp prioritaire 7j/7'
+      'Up to 6,000 conversations / month',
+      'ChatGPT-4o AI trained on your catalog',
+      'E-Commerce Catalog & Instant Order Booking',
+      'Automatic abandoned cart recovery',
+      'Multi-Agent Dashboard (Human Takeover)',
+      'Bulk Marketing Campaigns (1,000 sends/m)',
+      'Official Meta WhatsApp Cloud API',
+      'Priority WhatsApp Support 7j/7'
     ],
-    ctaText: 'Commencer Avec Pro IA',
+    ctaText: 'Get Started With Pro AI',
     popular: true
   },
   {
     id: 'enterprise',
-    name: 'Enterprise Custom',
-    priceMonthly: 'Sur Devis',
-    priceAnnual: 'Sur Devis',
-    badge: 'Grandes Marques & Agences',
-    description: 'Infrastructure dédiée sur-mesure avec intégration CRM & API sur mesure.',
+    name: 'Enterprise VIP',
+    priceMonthly: 'Custom Quote',
+    priceAnnual: 'Custom Quote',
+    badge: 'Brands & Agencies',
+    description: 'Dedicated infrastructure with custom CRM & API integration.',
     features: [
-      'Conversations & messages illimités',
-      'Modèle IA fine-tuné sur-mesure',
-      'Intégration CRM/ERP (Salesforce, SAP, Custom)',
-      'Serveur & Base de données dédiés',
-      'Manager de compte & Ingénieur dédié',
-      'Garantie de service SLA 99.99%',
-      'Formation de votre équipe sur site'
+      'Unlimited conversations & messages',
+      'Fine-tuned custom AI model',
+      'CRM/ERP Integration (Salesforce, SAP, Custom)',
+      'Dedicated server & database instance',
+      'Dedicated Account Manager & Engineer',
+      '99.99% SLA Uptime Guarantee',
+      'On-site team training'
     ],
-    ctaText: 'Demander Devis Custom',
+    ctaText: 'Request Custom Quote',
     popular: false
   }
 ];
@@ -71,19 +71,19 @@ export const Pricing = ({ onOpenQuoteModal }) => {
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto space-y-4 mb-12">
           <span className="text-wa-green text-xs font-bold uppercase tracking-widest bg-wa-green/10 border border-wa-green/30 px-3.5 py-1 rounded-full">
-            Tarifs Transparents
+            Transparent Pricing
           </span>
           <h2 className="text-3xl sm:text-5xl font-extrabold text-white">
-            Des formules adaptées à votre croissance
+            Plans built for your growth
           </h2>
           <p className="text-slate-300 text-base sm:text-lg">
-            Sans engagement à long terme. Mettez à niveau ou résiliez à tout moment.
+            No long-term contracts. Upgrade or cancel anytime.
           </p>
 
           {/* Annual vs Monthly Switcher */}
           <div className="pt-6 flex items-center justify-center gap-4">
             <span className={`text-sm font-semibold ${!isAnnual ? 'text-white' : 'text-slate-400'}`}>
-              Facturation Mensuelle
+              Monthly Billing
             </span>
 
             <button
@@ -99,10 +99,10 @@ export const Pricing = ({ onOpenQuoteModal }) => {
 
             <div className="flex items-center gap-1.5">
               <span className={`text-sm font-semibold ${isAnnual ? 'text-white' : 'text-slate-400'}`}>
-                Facturation Annuelle
+                Annual Billing
               </span>
               <span className="bg-wa-green/20 text-wa-green border border-wa-green/40 text-[10px] font-extrabold px-2 py-0.5 rounded-full">
-                -20% Économie
+                -20% Discount
               </span>
             </div>
           </div>
@@ -144,26 +144,25 @@ export const Pricing = ({ onOpenQuoteModal }) => {
                   {/* Price Display */}
                   <div className="my-6 py-4 border-y border-obsidian-border">
                     {isCustom ? (
-                      <div className="text-3xl font-extrabold text-white">Sur Devis</div>
+                      <div className="text-3xl font-extrabold text-white">Custom Quote</div>
                     ) : (
                       <div className="flex items-baseline gap-1">
                         <span className="text-4xl sm:text-5xl font-extrabold text-white">
-                          {isAnnual ? plan.priceAnnual : plan.priceMonthly}
+                          ${isAnnual ? plan.priceAnnual : plan.priceMonthly}
                         </span>
-                        <span className="text-lg font-bold text-wa-green">DH</span>
-                        <span className="text-xs text-slate-400 font-medium ml-1">/ mois</span>
+                        <span className="text-xs text-slate-400 font-medium ml-1">/ month</span>
                       </div>
                     )}
                     {isAnnual && !isCustom && (
                       <p className="text-[11px] text-wa-green mt-1 font-semibold">
-                        Facturé annuellement ({plan.priceAnnual * 12} DH/an)
+                        Billed annually (${plan.priceAnnual * 12}/yr)
                       </p>
                     )}
                   </div>
 
                   {/* Feature Checklist */}
                   <div className="space-y-3 mb-8">
-                    <p className="text-xs font-bold uppercase text-slate-400 tracking-wider">Ce qui est inclus :</p>
+                    <p className="text-xs font-bold uppercase text-slate-400 tracking-wider">What's included:</p>
                     {plan.features.map((feat, fIdx) => (
                       <div key={fIdx} className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-200">
                         <Check className="w-4 h-4 text-wa-green shrink-0 mt-0.5" />
@@ -195,15 +194,15 @@ export const Pricing = ({ onOpenQuoteModal }) => {
         <div className="mt-16 text-center text-xs text-slate-400 flex flex-wrap items-center justify-center gap-6">
           <span className="flex items-center gap-1.5">
             <ShieldCheck className="w-4 h-4 text-wa-green" />
-            <span>Paiement 100% sécurisé</span>
+            <span>100% Encrypted SSL Security</span>
           </span>
           <span className="flex items-center gap-1.5">
             <Zap className="w-4 h-4 text-wa-green" />
-            <span>Configuration active en 48h chrono</span>
+            <span>24h Express Setup</span>
           </span>
           <span className="flex items-center gap-1.5">
             <Globe className="w-4 h-4 text-wa-green" />
-            <span>Support client IA multilingue universel</span>
+            <span>Universal Multilingual AI Support</span>
           </span>
         </div>
 

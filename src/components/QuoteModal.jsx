@@ -4,73 +4,65 @@ import { X, Sparkles, Check, Send, ShoppingBag, Utensils, Building, Stethoscope,
 const packsOptions = [
   {
     id: 'starter',
-    name: 'Pack Starter',
+    name: 'Starter Plan',
     priceUsd: 10,
-    priceDh: 100,
-    badge: 'Débutant',
-    description: 'Bot de base pour réponse automatique 24/7'
+    badge: 'Starter',
+    description: 'Essential automated bot for 24/7 client response'
   },
   {
     id: 'pro',
-    name: 'Pack Business Pro',
+    name: 'Business Pro AI',
     priceUsd: 20,
-    priceDh: 200,
-    badge: '⭐ Populaire',
+    badge: '⭐ Recommended',
     popular: true,
-    description: 'IA connectée avec catalogue & qualification'
+    description: 'ChatGPT-4o AI with catalog & order booking'
   },
   {
     id: 'enterprise',
-    name: 'Pack Enterprise VIP',
+    name: 'Enterprise VIP',
     priceUsd: 35,
-    priceDh: 350,
-    badge: 'Sur-Mesure',
-    description: 'Haute performance & gestion multi-agents'
+    badge: 'Custom VIP',
+    description: 'High performance & multi-agent dashboard'
   }
 ];
 
 const industryOptions = [
-  { id: 'ecommerce', label: '🛍️ E-Commerce & Boutiques', type: 'products' },
-  { id: 'services', label: '🛠️ Prestation de Services & RDV', type: 'services' },
-  { id: 'realestate', label: '🏢 Immobilier & Agences', type: 'leads' },
-  { id: 'custom', label: '🏨 Autre / Sur-Mesure', type: 'custom' },
+  { id: 'ecommerce', label: '🛍️ E-Commerce & Retail', type: 'products' },
+  { id: 'services', label: '🛠️ Services & Appointments', type: 'services' },
+  { id: 'realestate', label: '🏢 Real Estate & Agencies', type: 'leads' },
+  { id: 'custom', label: '🏨 Custom / Other Sector', type: 'custom' },
 ];
 
 const featureAddons = [
   {
     id: 'multilingual',
-    title: '🌐 IA Multilingue (Répond dans toutes les langues selon le client)',
+    title: '🌐 Multilingual AI (Responds in any language used by client)',
     priceUsd: 2,
-    priceDh: 20,
-    description: 'Arabe, الدارجة, Français, Anglais, Espagnol...'
+    description: 'Automatic detection of English, French, Arabic, Spanish, etc.'
   },
   {
     id: 'promo_bulk',
-    title: '📢 Envois de Messages Promo Massifs (Bulk 1-Clic)',
+    title: '📢 Mass Bulk Broadcasts (1-Click Promo Envoys)',
     priceUsd: 2,
-    priceDh: 20,
-    description: 'Envoyez vos offres à tous vos clients en 1 clic'
+    description: 'Send promotions & updates to all your contacts at once'
   },
   {
     id: 'multi_agent_dashboard',
-    title: '👨‍💻 Dashboard Multi-Agents & Historique des Messages',
+    title: '👨‍💻 Multi-Agent Live Chat & Message History',
     priceUsd: 4,
-    priceDh: 40,
-    description: 'Consultez et répondez à tous vos messages en direct'
+    description: 'Human takeover dashboard to view & reply to live chats'
   },
   {
     id: 'google_sheets_sync',
-    title: '🔄 Connexion & Synchro Google Sheets / Shopify',
+    title: '🔄 Google Sheets & Shopify Live Sync',
     priceUsd: 2,
-    priceDh: 20,
-    description: 'Export automatique des commandes & confirmations'
+    description: 'Automatic export of leads, bookings & order confirmations'
   },
   {
     id: 'catalog_checkout',
-    title: '🛒 Catalogue Produits & Commande Directe WhatsApp',
+    title: '🛒 Interactive Product Catalog & Instant Checkout',
     priceUsd: 3,
-    priceDh: 30,
-    description: 'Affiche vos articles et enregistre les commandes'
+    description: 'Display product items & record order details in WhatsApp'
   }
 ];
 
@@ -101,32 +93,26 @@ export const QuoteModal = ({ isOpen, onClose, initialPack = 'pro' }) => {
     }
   };
 
-  // Calculate total price
+  // Calculate total price in USD ($)
   const addonsTotalUsd = selectedAddons.reduce((acc, id) => {
     const addon = featureAddons.find(a => a.id === id);
     return acc + (addon ? addon.priceUsd : 0);
   }, 0);
 
-  const addonsTotalDh = selectedAddons.reduce((acc, id) => {
-    const addon = featureAddons.find(a => a.id === id);
-    return acc + (addon ? addon.priceDh : 0);
-  }, 0);
-
   const totalUsd = currentPack.priceUsd + addonsTotalUsd;
-  const totalDh = currentPack.priceDh + addonsTotalDh;
 
   const handleSendWhatsAppQuote = (e) => {
     e.preventDefault();
     
     const industryObj = industryOptions.find(i => i.id === selectedIndustry);
-    const industryLabel = industryObj?.label || 'Sur-Mesure';
+    const industryLabel = industryObj?.label || 'Custom';
 
     const selectedAddonsList = selectedAddons.map(id => {
       const addon = featureAddons.find(a => a.id === id);
-      return addon ? `• ${addon.title} (+$${addon.priceUsd}/m)` : null;
+      return addon ? `• ${addon.title} (+$${addon.priceUsd}/mo)` : null;
     }).filter(Boolean).join('\n');
 
-    const whatsappMessage = `Bonjour WaBotix ! 🤖 Je souhaite configurer mon Bot WhatsApp sur-mesure :\n\n📦 *PACK DE BASE SÉLECTIONNÉ* :\n• ${currentPack.name} ($${currentPack.priceUsd}/mois - ${currentPack.priceDh} DH)\n\n🎯 *SECTEUR D'ACTIVITÉ* :\n• ${industryLabel}\n\n⚙️ *OPTIONS SECTEUR SÉLECTIONNÉES* :\n${selectedAddonsList || '• Aucune option supplémentaire'}\n\n💰 *PRIX TOTAL ESTIMÉ* :\n👉 *$${totalUsd}/mois* (${totalDh} DH/mois)\n\n🏢 *ENTREPRISE / MARQUE* : ${companyName || 'Non spécifié'}\n📞 *WHATSAPP* : ${phone || 'Non spécifié'}\n📝 *NOTES* : ${notes || 'Aucune'}\n\nMerci de me contacter pour la mise en service immédiate 🚀`;
+    const whatsappMessage = `Hello WaBotix! 🤖 I would like to configure a custom WhatsApp AI Bot:\n\n📦 *SELECTED BASE PLAN*:\n• ${currentPack.name} ($${currentPack.priceUsd}/month)\n\n🎯 *BUSINESS SECTOR*:\n• ${industryLabel}\n\n⚙️ *SELECTED ADD-ON FEATURES*:\n${selectedAddonsList || '• No additional add-ons'}\n\n💰 *ESTIMATED TOTAL PRICE*:\n👉 *$${totalUsd}/month*\n\n🏢 *COMPANY / BRAND*: ${companyName || 'Not specified'}\n📞 *WHATSAPP*: ${phone || 'Not specified'}\n📝 *NOTES*: ${notes || 'None'}\n\nPlease contact me for immediate setup 🚀`;
 
     const encodedText = encodeURIComponent(whatsappMessage);
     const targetPhoneNumber = "212661234567";
@@ -152,15 +138,15 @@ export const QuoteModal = ({ isOpen, onClose, initialPack = 'pro' }) => {
         <div className="space-y-1.5 pr-8">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-wa-green/10 border border-wa-green/30 text-wa-green text-xs font-extrabold uppercase tracking-wider">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Personnalisation De Votre Bot</span>
+            <span>CUSTOM BOT CONFIGURATOR</span>
           </div>
-          <h3 className="text-2xl font-extrabold text-white">Sélectionnez Vos Options & Secteur</h3>
+          <h3 className="text-2xl font-extrabold text-white">Configure Your WhatsApp AI Bot</h3>
           <p className="text-xs text-slate-300">
-            Personnalisez les fonctionnalités de votre Bot WhatsApp selon les besoins de votre activité.
+            Select your business sector and add-on features tailored to your workflow.
           </p>
         </div>
 
-        {/* Selected Base Pack Banner Card */}
+        {/* Selected Base Plan Header Banner Card */}
         <div className="p-4 rounded-2xl bg-wa-green/10 border border-wa-green/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-glow-green">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-wa-green/20 border border-wa-green/50 flex items-center justify-center shrink-0">
@@ -168,19 +154,19 @@ export const QuoteModal = ({ isOpen, onClose, initialPack = 'pro' }) => {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-[11px] font-bold text-slate-300 uppercase tracking-wider">Pack Choisi :</span>
+                <span className="text-[11px] font-bold text-slate-300 uppercase tracking-wider">Selected Plan:</span>
                 <span className="text-xs font-extrabold text-wa-green bg-wa-green/20 px-2.5 py-0.5 rounded-full border border-wa-green/30">
                   {currentPack.name}
                 </span>
               </div>
-              <p className="text-xs font-extrabold text-white mt-0.5">
-                ${currentPack.priceUsd} <span className="text-slate-400 font-semibold text-[11px]">/ mois</span> ({currentPack.priceDh} DH / mois)
+              <p className="text-sm font-extrabold text-white mt-0.5">
+                ${currentPack.priceUsd} <span className="text-slate-400 font-semibold text-xs">/ month</span>
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-1.5 self-end sm:self-auto">
-            <span className="text-[10px] text-slate-400 font-semibold mr-1">Changer :</span>
+            <span className="text-[10px] text-slate-400 font-semibold mr-1">Switch Plan:</span>
             {packsOptions.map(p => (
               <button
                 key={p.id}
@@ -192,7 +178,7 @@ export const QuoteModal = ({ isOpen, onClose, initialPack = 'pro' }) => {
                     : 'bg-obsidian-card border-obsidian-border text-slate-400 hover:text-white'
                 }`}
               >
-                {p.name.replace('Pack ', '')}
+                {p.name.replace(' Plan', '').replace(' AI', '').replace(' VIP', '')} (${p.priceUsd})
               </button>
             ))}
           </div>
@@ -203,7 +189,7 @@ export const QuoteModal = ({ isOpen, onClose, initialPack = 'pro' }) => {
           {/* STEP 1: Industry / Sector */}
           <div>
             <label className="block text-xs font-extrabold text-wa-green mb-2.5 uppercase tracking-wider">
-              1. Votre Secteur D'activité
+              1. SELECT YOUR BUSINESS SECTOR
             </label>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -232,9 +218,9 @@ export const QuoteModal = ({ isOpen, onClose, initialPack = 'pro' }) => {
           <div>
             <div className="flex items-center justify-between mb-2.5">
               <label className="block text-xs font-extrabold text-wa-green uppercase tracking-wider">
-                2. Options À La Carte (Sélectionnez selon vos besoins)
+                2. ADD-ON FEATURES (SELECT AS NEEDED)
               </label>
-              <span className="text-[10px] text-slate-400 font-bold">Prix ajouts par mois</span>
+              <span className="text-[10px] text-slate-400 font-bold">Monthly add-on pricing</span>
             </div>
 
             <div className="space-y-2">
@@ -265,8 +251,8 @@ export const QuoteModal = ({ isOpen, onClose, initialPack = 'pro' }) => {
                     </div>
 
                     <div className="text-right shrink-0">
-                      <span className="text-xs font-extrabold text-wa-green bg-wa-green/10 px-2 py-1 rounded-lg border border-wa-green/30 inline-block">
-                        +${addon.priceUsd} <span className="text-[10px] font-normal text-slate-300">({addon.priceDh} DH)</span>
+                      <span className="text-xs font-extrabold text-wa-green bg-wa-green/10 px-2.5 py-1 rounded-lg border border-wa-green/30 inline-block font-mono">
+                        +${addon.priceUsd} <span className="text-[10px] font-normal text-slate-300">/mo</span>
                       </span>
                     </div>
                   </button>
@@ -278,20 +264,19 @@ export const QuoteModal = ({ isOpen, onClose, initialPack = 'pro' }) => {
           {/* DYNAMIC TOTAL PRICE DISPLAY CARD */}
           <div className="p-4 rounded-2xl bg-gradient-to-r from-wa-darkGreen/50 via-obsidian-card to-obsidian border border-wa-green/40 flex items-center justify-between gap-4">
             <div className="space-y-1">
-              <span className="text-[10px] text-slate-300 uppercase tracking-wider font-extrabold block">PRIX TOTAL MENSUEL ESTIMÉ</span>
+              <span className="text-[10px] text-slate-300 uppercase tracking-wider font-extrabold block">ESTIMATED TOTAL MONTHLY PRICE</span>
               <div className="flex items-baseline gap-2">
                 <span className="text-2xl sm:text-3xl font-black text-white font-mono">${totalUsd}</span>
-                <span className="text-xs font-bold text-wa-green">/ mois</span>
-                <span className="text-xs text-slate-300 ml-1 font-semibold">({totalDh} DH / mois)</span>
+                <span className="text-xs font-bold text-wa-green">/ month</span>
               </div>
               <p className="text-[10px] text-slate-400">
-                {currentPack.name} (${currentPack.priceUsd}) + {selectedAddons.length} option(s) (+${addonsTotalUsd})
+                {currentPack.name} (${currentPack.priceUsd}) + {selectedAddons.length} Add-on(s) (+${addonsTotalUsd})
               </p>
             </div>
 
             <div className="text-right hidden sm:block">
               <span className="text-[11px] font-bold text-wa-green bg-wa-green/10 border border-wa-green/30 px-3 py-1.5 rounded-xl block">
-                ⚡ Mise en ligne sous 24h
+                ⚡ 24h Express Deployment
               </span>
             </div>
           </div>
@@ -300,12 +285,12 @@ export const QuoteModal = ({ isOpen, onClose, initialPack = 'pro' }) => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-[11px] font-bold text-slate-300 mb-1 uppercase">
-                Nom d'entreprise / Marque
+                Company / Brand Name
               </label>
               <input
                 type="text"
                 required
-                placeholder="Ex: FootLab Morocco"
+                placeholder="e.g. FootLab Apparel"
                 value={companyName}
                 onChange={(e) => setCompanyName(e.target.value)}
                 className="w-full bg-obsidian-card border border-obsidian-border rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-wa-green"
@@ -314,12 +299,12 @@ export const QuoteModal = ({ isOpen, onClose, initialPack = 'pro' }) => {
 
             <div>
               <label className="block text-[11px] font-bold text-slate-300 mb-1 uppercase">
-                Votre Numéro WhatsApp
+                Your WhatsApp Number
               </label>
               <input
                 type="text"
                 required
-                placeholder="+212 6..."
+                placeholder="e.g. +1 234 567 8900"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 className="w-full bg-obsidian-card border border-obsidian-border rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-wa-green"
@@ -329,11 +314,11 @@ export const QuoteModal = ({ isOpen, onClose, initialPack = 'pro' }) => {
 
           <div>
             <label className="block text-[11px] font-bold text-slate-300 mb-1 uppercase">
-              Précisions ou besoins spécifiques (Optionnel)
+              Additional Requirements or Notes (Optional)
             </label>
             <textarea
               rows={2}
-              placeholder="Ex: Je vends des chaussures et vêtements, je veux personnaliser les réponses en الدارجة..."
+              placeholder="e.g. I sell shoes and clothing, I want customized prompt responses..."
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               className="w-full bg-obsidian-card border border-obsidian-border rounded-xl p-3 text-xs text-white focus:outline-none focus:border-wa-green"
@@ -346,7 +331,7 @@ export const QuoteModal = ({ isOpen, onClose, initialPack = 'pro' }) => {
             className="w-full py-4 rounded-2xl bg-gradient-to-r from-wa-green via-emerald-400 to-wa-green text-obsidian font-black text-sm shadow-glow-green transition-all hover:scale-[1.01] flex items-center justify-center gap-2"
           >
             <Send className="w-4 h-4 fill-obsidian" />
-            <span>Envoyer Ma Demande (${totalUsd}/mois) Sur WhatsApp 🚀</span>
+            <span>Submit Request (${totalUsd}/mo) via WhatsApp 🚀</span>
           </button>
 
         </form>
