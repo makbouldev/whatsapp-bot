@@ -18,12 +18,19 @@ import { FaqPage } from './pages/FaqPage';
 import { ContactPage } from './pages/ContactPage';
 import { DashboardLayout } from './dashboard/DashboardLayout';
 
+import { PaypalModal } from './components/PaypalModal';
+
 import { Lock, ShieldAlert, Sparkles, LogOut, ArrowRight } from 'lucide-react';
 
 const MainAppContent = () => {
-  const { isLoggedIn, isPaid, user, openAuthModal, logout } = useAuth();
+  const { isLoggedIn, isPaid, user, openAuthModal, logout, pendingBotOrder } = useAuth();
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
   const [selectedQuotePack, setSelectedQuotePack] = useState('pro');
+  
+  // PayPal Modal State
+  const [isPaypalModalOpen, setIsPaypalModalOpen] = useState(false);
+  const [paypalOrderData, setPaypalOrderData] = useState(null);
+
   const navigate = useNavigate();
 
   const handleNavigatePricing = () => {
@@ -42,6 +49,15 @@ const MainAppContent = () => {
 
   const handleCloseQuoteModal = () => {
     setIsQuoteModalOpen(false);
+  };
+
+  const handleOpenPaypalModal = (orderData) => {
+    setPaypalOrderData(orderData || pendingBotOrder || { planName: 'Business Pro AI', totalUsd: 20 });
+    setIsPaypalModalOpen(true);
+  };
+
+  const handleClosePaypalModal = () => {
+    setIsPaypalModalOpen(false);
   };
 
   return (
@@ -95,45 +111,61 @@ const MainAppContent = () => {
                 </div>
               ) : !isPaid ? (
                 <div className="pt-32 pb-20 text-center space-y-6 max-w-lg mx-auto px-4 animate-in fade-in duration-300">
-                  <div className="w-20 h-20 rounded-3xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mx-auto text-amber-400 shadow-lg">
+                  <div className="w-20 h-20 rounded-3xl bg-[#0070BA]/15 border border-[#0070BA]/40 flex items-center justify-center mx-auto text-[#0070BA] shadow-lg">
                     <Lock className="w-10 h-10" />
                   </div>
                   <div className="space-y-2">
-                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[11px] font-extrabold uppercase tracking-wider">
-                      <span>⚡ Active Plan Required</span>
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0070BA]/15 border border-[#0070BA]/40 text-[#0070BA] text-[11px] font-extrabold uppercase tracking-wider">
+                      <span>💳 PayPal Payment Required</span>
                     </div>
-                    <h2 className="text-3xl font-extrabold text-white">Unlock Your Dashboard</h2>
+                    <h2 className="text-3xl font-extrabold text-white">PayPal Payment Required</h2>
                     <p className="text-xs text-slate-300 leading-relaxed">
-                      You are logged in as <span className="font-bold text-white">{user?.email}</span>, but your account does not have an active WhatsApp Bot subscription yet. Select a plan to activate your AI Assistant and start managing your leads.
+                      You are logged in as <span className="font-bold text-white">{user?.email}</span>. Please complete your monthly subscription payment via PayPal to unlock full access to your WhatsApp Bot Dashboard.
                     </p>
                   </div>
                   
+                  {/* Summary Box */}
                   <div className="p-4 rounded-2xl bg-obsidian-card border border-obsidian-border text-left space-y-3">
                     <div className="flex items-center justify-between text-xs font-bold border-b border-obsidian-border/60 pb-2">
                       <span className="text-slate-400">Account Email:</span>
                       <span className="text-white">{user?.email}</span>
                     </div>
+                    <div className="flex items-center justify-between text-xs font-bold border-b border-obsidian-border/60 pb-2">
+                      <span className="text-slate-400">Target Plan:</span>
+                      <span className="text-wa-green font-extrabold">{pendingBotOrder?.planName || 'Business Pro AI ($20/mo)'}</span>
+                    </div>
                     <div className="flex items-center justify-between text-xs font-bold">
                       <span className="text-slate-400">Subscription Status:</span>
-                      <span className="text-amber-400 font-extrabold bg-amber-500/10 px-2.5 py-0.5 rounded-md border border-amber-500/30">Unpaid / Inactive</span>
+                      <span className="text-amber-400 font-extrabold bg-amber-500/10 px-2.5 py-0.5 rounded-md border border-amber-500/30">Unpaid / Payment Pending</span>
                     </div>
                   </div>
 
-                  <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                  {/* PayPal Primary Action Button */}
+                  <div className="space-y-3 pt-2">
                     <button
-                      onClick={() => handleOpenQuoteModal('pro')}
-                      className="flex-1 py-3.5 px-4 bg-gradient-to-r from-wa-green via-emerald-400 to-wa-green text-obsidian font-black rounded-xl text-xs shadow-glow-green hover:scale-[1.02] transition-all flex items-center justify-center gap-2"
+                      onClick={() => handleOpenPaypalModal(pendingBotOrder)}
+                      className="w-full py-4 px-6 bg-[#FFC439] hover:bg-[#ffbb1a] text-obsidian font-black rounded-2xl text-sm shadow-xl hover:scale-[1.01] transition-all flex items-center justify-center gap-2"
                     >
-                      <Sparkles className="w-4 h-4" />
-                      <span>Choose Plan & Activate ($10/mo)</span>
+                      <span className="text-[#003087] font-serif italic text-lg font-black">PayPal</span>
+                      <span>Pay Now with PayPal (${pendingBotOrder?.totalUsd || 20}.00)</span>
+                      <ArrowRight className="w-4 h-4 stroke-[3] text-[#003087]" />
                     </button>
-                    <button
-                      onClick={() => logout()}
-                      className="py-3.5 px-4 bg-obsidian-card border border-obsidian-border text-slate-400 hover:text-white font-bold rounded-xl text-xs hover:border-slate-600 transition-all flex items-center justify-center gap-2"
-                    >
-                      <LogOut className="w-4 h-4" />
-                      <span>Sign Out</span>
-                    </button>
+
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => handleOpenQuoteModal('pro')}
+                        className="flex-1 py-3 px-4 bg-obsidian-card border border-obsidian-border text-slate-300 hover:text-white font-bold rounded-xl text-xs hover:border-wa-green/40 transition-all"
+                      >
+                        Customize Plan
+                      </button>
+                      <button
+                        onClick={() => logout()}
+                        className="py-3 px-4 bg-obsidian-card border border-obsidian-border text-slate-400 hover:text-white font-bold rounded-xl text-xs hover:border-slate-600 transition-all flex items-center justify-center gap-1.5"
+                      >
+                        <LogOut className="w-3.5 h-3.5" />
+                        <span>Sign Out</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               ) : (
@@ -154,7 +186,19 @@ const MainAppContent = () => {
       <AuthModal onNavigateDashboard={() => navigate('/dashboard')} />
 
       {/* Quote Builder Modal */}
-      <QuoteModal isOpen={isQuoteModalOpen} onClose={handleCloseQuoteModal} initialPack={selectedQuotePack} />
+      <QuoteModal
+        isOpen={isQuoteModalOpen}
+        onClose={handleCloseQuoteModal}
+        initialPack={selectedQuotePack}
+        onOpenPaypalModal={handleOpenPaypalModal}
+      />
+
+      {/* PayPal Checkout Modal */}
+      <PaypalModal
+        isOpen={isPaypalModalOpen}
+        onClose={handleClosePaypalModal}
+        orderData={paypalOrderData}
+      />
 
       {/* Floating Action Button */}
       <FloatingCta onNavigatePricing={handleNavigatePricing} />

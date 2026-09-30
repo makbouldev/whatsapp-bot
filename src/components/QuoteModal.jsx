@@ -68,8 +68,8 @@ const featureAddons = [
   }
 ];
 
-export const QuoteModal = ({ isOpen, onClose, initialPack = 'pro' }) => {
-  const { isLoggedIn, markAsPaid, savePendingBotOrder, openAuthModal } = useAuth();
+export const QuoteModal = ({ isOpen, onClose, initialPack = 'pro', onOpenPaypalModal }) => {
+  const { isLoggedIn, savePendingBotOrder, openAuthModal } = useAuth();
   const navigate = useNavigate();
 
   const [selectedPack, setSelectedPack] = useState(initialPack);
@@ -125,14 +125,17 @@ export const QuoteModal = ({ isOpen, onClose, initialPack = 'pro' }) => {
         : 'Hello! 👋 Welcome. Which service or appointment would you like to book today?'
     };
 
+    savePendingBotOrder(orderData);
+    onClose();
+
     if (isLoggedIn) {
-      markAsPaid(orderData);
-      onClose();
-      navigate('/dashboard');
+      if (onOpenPaypalModal) {
+        onOpenPaypalModal(orderData);
+      } else {
+        navigate('/dashboard');
+      }
     } else {
-      // Save order config in memory context, close QuoteModal, and open AuthModal in 'signup' mode!
-      savePendingBotOrder(orderData);
-      onClose();
+      // Open AuthModal in 'signup' mode!
       openAuthModal('signup');
     }
   };
@@ -296,22 +299,23 @@ export const QuoteModal = ({ isOpen, onClose, initialPack = 'pro' }) => {
             </div>
           </div>
 
-          {/* Dynamic Action Button: Continue (if Logged In) vs Create Account & Order (if Not Logged In) */}
+          {/* Dynamic Action Button: PayPal Checkout */}
           {isLoggedIn ? (
             <button
               type="submit"
-              className="w-full py-4 rounded-2xl bg-gradient-to-r from-wa-green via-emerald-400 to-wa-green text-obsidian font-black text-sm shadow-glow-green transition-all hover:scale-[1.01] flex items-center justify-center gap-2"
+              className="w-full py-4 rounded-2xl bg-[#FFC439] hover:bg-[#ffbb1a] text-obsidian font-black text-sm shadow-xl transition-all hover:scale-[1.01] flex items-center justify-center gap-2"
             >
-              <span>Continue to Dashboard (${totalUsd}/mo)</span>
-              <ArrowRight className="w-4 h-4 stroke-[3]" />
+              <span className="text-[#003087] font-serif italic text-base font-black">PayPal</span>
+              <span>Proceed to PayPal Checkout (${totalUsd}/mo)</span>
+              <ArrowRight className="w-4 h-4 stroke-[3] text-[#003087]" />
             </button>
           ) : (
             <button
               type="submit"
-              className="w-full py-4 rounded-2xl bg-gradient-to-r from-wa-green via-emerald-400 to-wa-green text-obsidian font-black text-sm shadow-glow-green transition-all hover:scale-[1.01] flex items-center justify-center gap-2"
+              className="w-full py-4 rounded-2xl bg-[#FFC439] hover:bg-[#ffbb1a] text-obsidian font-black text-sm shadow-xl transition-all hover:scale-[1.01] flex items-center justify-center gap-2"
             >
-              <UserPlus className="w-4 h-4" />
-              <span>Create Account & Order (${totalUsd}/mo) 🚀</span>
+              <span className="text-[#003087] font-serif italic text-base font-black">PayPal</span>
+              <span>Create Account & Pay with PayPal (${totalUsd}/mo) 🚀</span>
             </button>
           )}
 
