@@ -17,6 +17,7 @@ export const initialSingleUserBot = {
 
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isPaid, setIsPaid] = useState(false);
   const [user, setUser] = useState(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authModalMode, setAuthModalMode] = useState('login');
@@ -41,16 +42,35 @@ export const AuthProvider = ({ children }) => {
     setPendingBotOrder(orderData);
   };
 
+  const markAsPaid = (orderData) => {
+    setIsPaid(true);
+    if (orderData) {
+      setUser(prev => ({
+        ...prev,
+        plan: orderData.planName || prev?.plan || 'Business Pro Bot',
+        isPaid: true
+      }));
+      setUserBot(prev => ({
+        ...prev,
+        type: orderData.sectorLabel ? `${orderData.planName} (${orderData.sectorLabel})` : prev.type,
+        prompt: orderData.prompt || prev.prompt,
+        welcomeMessage: orderData.welcomeMessage || prev.welcomeMessage
+      }));
+    }
+  };
+
   const login = (userData) => {
     const userName = userData?.name || 'Noureddine Agency';
+    const userHasPaid = Boolean(pendingBotOrder || userData?.isPaid);
 
     setUser({
       name: userName,
       email: userData?.email || 'contact@noureddine.ma',
       phone: userData?.phone || '+212 661 234 567',
-      plan: pendingBotOrder?.planName || 'Business Pro Bot',
+      plan: pendingBotOrder?.planName || (userHasPaid ? 'Business Pro Bot' : 'No Active Plan'),
       avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=150',
-      company: userName
+      company: userName,
+      isPaid: userHasPaid
     });
 
     // Assign 1 dedicated bot with saved order configuration if available
@@ -67,6 +87,7 @@ export const AuthProvider = ({ children }) => {
       welcomeMessage: pendingBotOrder?.welcomeMessage || 'Hello! 👋 Welcome to our store. How can I help you today?'
     });
 
+    setIsPaid(userHasPaid);
     setIsLoggedIn(true);
     closeAuthModal();
   };
@@ -74,6 +95,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
     setIsLoggedIn(false);
+    setIsPaid(false);
     setPendingBotOrder(null);
   };
 
@@ -95,6 +117,7 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider
       value={{
         isLoggedIn,
+        isPaid,
         user,
         isAuthModalOpen,
         authModalMode,
@@ -102,6 +125,7 @@ export const AuthProvider = ({ children }) => {
         bots: [userBot], // Array accessor for backwards compatibility
         activeDashboardTab,
         pendingBotOrder,
+        markAsPaid,
         savePendingBotOrder,
         setActiveDashboardTab,
         openAuthModal,

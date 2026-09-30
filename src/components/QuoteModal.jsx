@@ -69,7 +69,7 @@ const featureAddons = [
 ];
 
 export const QuoteModal = ({ isOpen, onClose, initialPack = 'pro' }) => {
-  const { isLoggedIn, login, updateBotConfig, savePendingBotOrder, openAuthModal } = useAuth();
+  const { isLoggedIn, markAsPaid, savePendingBotOrder, openAuthModal } = useAuth();
   const navigate = useNavigate();
 
   const [selectedPack, setSelectedPack] = useState(initialPack);
@@ -126,11 +126,7 @@ export const QuoteModal = ({ isOpen, onClose, initialPack = 'pro' }) => {
     };
 
     if (isLoggedIn) {
-      updateBotConfig({
-        type: `${currentPack.name} (${industryLabel})`,
-        prompt: orderData.prompt,
-        welcomeMessage: orderData.welcomeMessage
-      });
+      markAsPaid(orderData);
       onClose();
       navigate('/dashboard');
     } else {

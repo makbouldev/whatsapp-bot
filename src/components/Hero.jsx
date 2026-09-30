@@ -4,11 +4,11 @@ import { Sparkles, Bot, Play, Zap, ShieldCheck, CheckCircle2, TrendingUp, ArrowR
 import { useAuth } from '../context/AuthContext';
 
 export const Hero = ({ onNavigatePricing, onNavigateSimulator }) => {
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, isPaid } = useAuth();
   const navigate = useNavigate();
 
   const handlePrimaryCta = () => {
-    if (isLoggedIn) {
+    if (isLoggedIn && isPaid) {
       navigate('/dashboard');
     } else {
       onNavigatePricing();
@@ -80,11 +80,19 @@ export const Hero = ({ onNavigatePricing, onNavigateSimulator }) => {
                 <span className="absolute inset-0 bg-gradient-to-r from-wa-green via-emerald-400 to-wa-accent animate-shimmer"></span>
                 <span className="relative inline-flex items-center justify-center w-full px-7 py-3 rounded-[11px] bg-obsidian group-hover:bg-opacity-90 text-wa-green font-extrabold text-xs sm:text-sm transition-all gap-2">
                   {isLoggedIn ? (
-                    <>
-                      <LayoutDashboard className="w-4 h-4 text-wa-green" />
-                      <span>Go to Dashboard</span>
-                      <ArrowRight className="w-3.5 h-3.5 text-wa-green group-hover:translate-x-1 transition-transform" />
-                    </>
+                    isPaid ? (
+                      <>
+                        <LayoutDashboard className="w-4 h-4 text-wa-green" />
+                        <span>Go to Dashboard</span>
+                        <ArrowRight className="w-3.5 h-3.5 text-wa-green group-hover:translate-x-1 transition-transform" />
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-4 h-4 text-wa-green group-hover:rotate-12 transition-transform" />
+                        <span>Activate My Bot ($10+)</span>
+                        <ArrowRight className="w-3.5 h-3.5 text-wa-green group-hover:translate-x-1 transition-transform" />
+                      </>
+                    )
                   ) : (
                     <>
                       <Sparkles className="w-4 h-4 text-wa-green group-hover:rotate-12 transition-transform" />
@@ -102,7 +110,7 @@ export const Hero = ({ onNavigatePricing, onNavigateSimulator }) => {
                 <div className="w-5 h-5 rounded-full bg-wa-green/20 flex items-center justify-center border border-wa-green/40">
                   <Play className="w-2.5 h-2.5 text-wa-green fill-wa-green ml-0.5" />
                 </div>
-                <span>Tester La Démo</span>
+                <span>Try Live Demo</span>
               </button>
             </div>
 

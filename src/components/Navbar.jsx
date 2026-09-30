@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { Bot, LogIn, Sparkles, LayoutDashboard, Menu, X, ArrowRight } from 'lucide-react';
 
 export const Navbar = ({ onOpenQuoteModal }) => {
-  const { isLoggedIn, user, openAuthModal, logout } = useAuth();
+  const { isLoggedIn, isPaid, user, openAuthModal, logout } = useAuth();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
@@ -36,7 +36,7 @@ export const Navbar = ({ onOpenQuoteModal }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
           
-          {/* Clean Logo (No overlapping badges) */}
+          {/* Clean Logo */}
           <Link to="/" className="flex items-center gap-2.5 group shrink-0">
             <div className="w-9 h-9 rounded-xl bg-wa-green/10 border border-wa-green/40 flex items-center justify-center group-hover:scale-105 transition-transform">
               <Bot className="w-5 h-5 text-wa-green" />
@@ -46,22 +46,22 @@ export const Navbar = ({ onOpenQuoteModal }) => {
             </span>
           </Link>
 
-          {/* Essential Nav Links Only (Clean & Uncluttered - 4 Links Max) */}
+          {/* Essential Nav Links (100% English) */}
           <nav className="hidden md:flex items-center gap-8 bg-obsidian-card/80 border border-obsidian-border px-6 py-2 rounded-full shadow-inner">
             <NavLink to="/simulator" className={navLinkStyle}>
               <span className="flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-wa-green animate-pulse"></span>
-                <span>Démo Live</span>
+                <span>Live Demo</span>
               </span>
             </NavLink>
             <NavLink to="/features" className={navLinkStyle}>
-              Fonctionnalités
+              Features
             </NavLink>
             <NavLink to="/solutions" className={navLinkStyle}>
               Solutions
             </NavLink>
             <NavLink to="/pricing" className={navLinkStyle}>
-              Tarifs
+              Pricing
             </NavLink>
           </nav>
 
@@ -86,7 +86,7 @@ export const Navbar = ({ onOpenQuoteModal }) => {
                 {userDropdownOpen && (
                   <div className="absolute right-0 mt-2 w-56 glass-panel rounded-2xl shadow-2xl py-2 border border-obsidian-border z-50">
                     <div className="px-4 py-2 border-b border-obsidian-border">
-                      <p className="text-xs text-slate-400">Connecté en tant que</p>
+                      <p className="text-xs text-slate-400">Logged in as</p>
                       <p className="text-xs font-bold text-white truncate">{user.email}</p>
                     </div>
                     
@@ -98,7 +98,7 @@ export const Navbar = ({ onOpenQuoteModal }) => {
                       className="w-full text-left px-4 py-2 text-xs text-slate-200 hover:bg-wa-green/10 hover:text-wa-green flex items-center gap-2 font-medium"
                     >
                       <LayoutDashboard className="w-4 h-4 text-wa-green" />
-                      <span>Espace Client (Dashboard)</span>
+                      <span>Client Portal Dashboard</span>
                     </button>
 
                     <button
@@ -109,7 +109,7 @@ export const Navbar = ({ onOpenQuoteModal }) => {
                       className="w-full text-left px-4 py-2 text-xs text-red-400 hover:bg-red-500/10 flex items-center gap-2 border-t border-obsidian-border/50 font-medium"
                     >
                       <LogIn className="w-4 h-4 rotate-180" />
-                      <span>Déconnexion</span>
+                      <span>Sign Out</span>
                     </button>
                   </div>
                 )}
@@ -120,22 +120,35 @@ export const Navbar = ({ onOpenQuoteModal }) => {
                 className="text-xs font-semibold text-slate-300 hover:text-white px-3 py-2 rounded-xl transition-colors hover:bg-white/5 flex items-center gap-1.5"
               >
                 <LogIn className="w-3.5 h-3.5 text-wa-green" />
-                <span>Connexion</span>
+                <span>Sign In</span>
               </button>
             )}
 
             {/* Primary Action Button */}
             {isLoggedIn ? (
-              <button
-                onClick={() => {
-                  navigate('/dashboard');
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-                className="bg-wa-green hover:bg-emerald-400 text-obsidian font-extrabold px-4 py-2 rounded-xl shadow-glow-green hover:scale-105 transition-all text-xs flex items-center gap-1.5"
-              >
-                <LayoutDashboard className="w-3.5 h-3.5 fill-obsidian" />
-                <span>Go to Dashboard</span>
-              </button>
+              isPaid ? (
+                <button
+                  onClick={() => {
+                    navigate('/dashboard');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="bg-wa-green hover:bg-emerald-400 text-obsidian font-extrabold px-4 py-2 rounded-xl shadow-glow-green hover:scale-105 transition-all text-xs flex items-center gap-1.5"
+                >
+                  <LayoutDashboard className="w-3.5 h-3.5 fill-obsidian" />
+                  <span>Go to Dashboard</span>
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    navigate('/pricing');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="bg-amber-400 hover:bg-amber-300 text-obsidian font-extrabold px-4 py-2 rounded-xl shadow-lg hover:scale-105 transition-all text-xs flex items-center gap-1.5"
+                >
+                  <Sparkles className="w-3.5 h-3.5 fill-obsidian" />
+                  <span>Activate My Bot ($10+)</span>
+                </button>
+              )
             ) : (
               <button
                 onClick={() => {
@@ -157,7 +170,7 @@ export const Navbar = ({ onOpenQuoteModal }) => {
                 onClick={() => openAuthModal('login')}
                 className="text-xs bg-obsidian-card border border-obsidian-border px-3 py-1.5 rounded-lg text-slate-200 font-semibold"
               >
-                Connexion
+                Sign In
               </button>
             )}
             <button
@@ -180,7 +193,7 @@ export const Navbar = ({ onOpenQuoteModal }) => {
               onClick={() => setMobileMenuOpen(false)}
               className={({ isActive }) => `text-sm font-semibold py-1 flex items-center justify-between ${isActive ? 'text-wa-green font-bold' : 'text-slate-200'}`}
             >
-              <span>Démo Live Simulator</span>
+              <span>Live Demo Simulator</span>
               <span className="bg-wa-green/20 text-wa-green text-[10px] px-2 py-0.5 rounded-full font-bold">Interactive</span>
             </NavLink>
             <NavLink
@@ -188,7 +201,7 @@ export const Navbar = ({ onOpenQuoteModal }) => {
               onClick={() => setMobileMenuOpen(false)}
               className={({ isActive }) => `text-sm font-semibold py-1 ${isActive ? 'text-wa-green font-bold' : 'text-slate-200'}`}
             >
-              Fonctionnalités
+              Features
             </NavLink>
             <NavLink
               to="/solutions"
@@ -202,23 +215,12 @@ export const Navbar = ({ onOpenQuoteModal }) => {
               onClick={() => setMobileMenuOpen(false)}
               className={({ isActive }) => `text-sm font-semibold py-1 ${isActive ? 'text-wa-green font-bold' : 'text-slate-200'}`}
             >
-              Tarifs
+              Pricing
             </NavLink>
           </nav>
 
           <div className="pt-3 border-t border-obsidian-border flex flex-col gap-2">
-            {isLoggedIn ? (
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  navigate('/dashboard');
-                }}
-                className="w-full bg-obsidian-card border border-wa-green text-wa-green font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-2"
-              >
-                <LayoutDashboard className="w-4 h-4" />
-                <span>Espace Client Dashboard</span>
-              </button>
-            ) : (
+            {!isLoggedIn && (
               <button
                 onClick={() => {
                   setMobileMenuOpen(false);
@@ -227,22 +229,36 @@ export const Navbar = ({ onOpenQuoteModal }) => {
                 className="w-full bg-obsidian-card border border-obsidian-border text-white font-semibold py-2.5 rounded-xl text-xs flex items-center justify-center gap-2"
               >
                 <LogIn className="w-4 h-4 text-wa-green" />
-                <span>Se Connecter</span>
+                <span>Sign In</span>
               </button>
             )}
 
             {isLoggedIn ? (
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  navigate('/dashboard');
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-                className="w-full bg-wa-green text-obsidian font-extrabold py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 shadow-glow-green"
-              >
-                <LayoutDashboard className="w-4 h-4" />
-                <span>Go to Dashboard</span>
-              </button>
+              isPaid ? (
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    navigate('/dashboard');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="w-full bg-wa-green text-obsidian font-extrabold py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 shadow-glow-green"
+                >
+                  <LayoutDashboard className="w-4 h-4" />
+                  <span>Go to Dashboard</span>
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    navigate('/pricing');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="w-full bg-amber-400 text-obsidian font-extrabold py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  <span>Activate My Bot ($10+)</span>
+                </button>
+              )
             ) : (
               <button
                 onClick={() => {

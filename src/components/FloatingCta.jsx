@@ -4,11 +4,11 @@ import { MessageCircle, Sparkles, LayoutDashboard } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export const FloatingCta = ({ onNavigatePricing }) => {
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, isPaid } = useAuth();
   const navigate = useNavigate();
 
   const handleBadgeClick = () => {
-    if (isLoggedIn) {
+    if (isLoggedIn && isPaid) {
       navigate('/dashboard');
     } else {
       onNavigatePricing();
@@ -16,7 +16,7 @@ export const FloatingCta = ({ onNavigatePricing }) => {
   };
 
   const handleDirectWhatsApp = () => {
-    const defaultText = encodeURIComponent("Salam WaBotix ! 🤖 Bghit nstafed mn un devis gratuit l-Bot WhatsApp dyali.");
+    const defaultText = encodeURIComponent("Hello WaBotix! 🤖 I would like to get a quote and demo for my business WhatsApp Bot.");
     window.open(`https://wa.me/212661234567?text=${defaultText}`, '_blank');
   };
 
@@ -30,14 +30,22 @@ export const FloatingCta = ({ onNavigatePricing }) => {
       >
         <span className="w-2 h-2 rounded-full bg-wa-green animate-ping"></span>
         {isLoggedIn ? (
-          <>
-            <LayoutDashboard className="w-3.5 h-3.5 text-wa-green" />
-            <span>Go to My Dashboard</span>
-            <span className="text-wa-green font-extrabold group-hover:translate-x-1 transition-transform">&rarr;</span>
-          </>
+          isPaid ? (
+            <>
+              <LayoutDashboard className="w-3.5 h-3.5 text-wa-green" />
+              <span>Go to My Dashboard</span>
+              <span className="text-wa-green font-extrabold group-hover:translate-x-1 transition-transform">&rarr;</span>
+            </>
+          ) : (
+            <>
+              <Sparkles className="w-3.5 h-3.5 text-wa-green" />
+              <span>Activate My Bot ($10+)</span>
+              <span className="text-wa-green font-extrabold group-hover:translate-x-1 transition-transform">&rarr;</span>
+            </>
+          )
         ) : (
           <>
-            <span>Besoin d'un Bot WhatsApp ?</span>
+            <span>Need a WhatsApp AI Bot?</span>
             <span className="text-wa-green font-extrabold group-hover:translate-x-1 transition-transform">Create My Bot &rarr;</span>
           </>
         )}
@@ -47,7 +55,7 @@ export const FloatingCta = ({ onNavigatePricing }) => {
       <button
         onClick={handleDirectWhatsApp}
         className="w-14 h-14 rounded-full bg-wa-green hover:bg-emerald-400 text-obsidian flex items-center justify-center shadow-glow-green hover:scale-110 transition-all duration-300 relative group animate-pulse-glow"
-        title="Discuter directement sur WhatsApp"
+        title="Chat directly on WhatsApp"
       >
         <MessageCircle className="w-7 h-7 fill-obsidian" />
         <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-obsidian"></span>
