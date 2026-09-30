@@ -2,7 +2,7 @@ import React from 'react';
 import { Sparkles, Bot, Play, Zap, ShieldCheck, CheckCircle2, TrendingUp, ArrowRight, Globe, CheckCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
-export const Hero = ({ onOpenQuoteModal, onNavigateSimulator }) => {
+export const Hero = ({ onNavigatePricing, onNavigateSimulator }) => {
   const { isLoggedIn, openAuthModal } = useAuth();
 
   return (
@@ -22,7 +22,7 @@ export const Hero = ({ onOpenQuoteModal, onNavigateSimulator }) => {
             
             {/* Announcement Badge */}
             <div 
-              onClick={onOpenQuoteModal}
+              onClick={onNavigatePricing}
               className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full glass-panel border border-wa-green/40 shadow-glow-green text-[11px] sm:text-xs font-semibold text-slate-200 cursor-pointer hover:scale-105 transition-transform"
             >
               <span className="flex h-2 w-2 relative">
@@ -64,7 +64,7 @@ export const Hero = ({ onOpenQuoteModal, onNavigateSimulator }) => {
             {/* Call To Action Buttons */}
             <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
               <button
-                onClick={onOpenQuoteModal}
+                onClick={onNavigatePricing}
                 className="w-full sm:w-auto relative group overflow-hidden rounded-xl p-px font-extrabold shadow-glow-green"
               >
                 <span className="absolute inset-0 bg-gradient-to-r from-wa-green via-emerald-400 to-wa-accent animate-shimmer"></span>
@@ -147,7 +147,7 @@ export const Hero = ({ onOpenQuoteModal, onNavigateSimulator }) => {
                   {/* Interactive Quick Buttons */}
                   <div className="space-y-1.5 pt-1">
                     <button
-                      onClick={onOpenQuoteModal}
+                      onClick={onNavigatePricing}
                       className="w-full text-center py-2 px-3 bg-wa-teal/40 hover:bg-wa-green hover:text-obsidian border border-wa-green/50 text-wa-green font-bold text-[11px] rounded-xl transition-all"
                     >
                       🚀 Obtenir mon devis gratuit

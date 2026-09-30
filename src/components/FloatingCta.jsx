@@ -1,7 +1,7 @@
 import React from 'react';
 import { MessageCircle, Sparkles } from 'lucide-react';
 
-export const FloatingCta = ({ onOpenQuoteModal }) => {
+export const FloatingCta = ({ onNavigatePricing }) => {
   const handleDirectWhatsApp = () => {
     const defaultText = encodeURIComponent("Salam WaBotix ! 🤖 Bghit nstafed mn un devis gratuit l-Bot WhatsApp dyali.");
     window.open(`https://wa.me/212661234567?text=${defaultText}`, '_blank');
@@ -12,7 +12,7 @@ export const FloatingCta = ({ onOpenQuoteModal }) => {
       
       {/* Tooltip Badge */}
       <div
-        onClick={onOpenQuoteModal}
+        onClick={onNavigatePricing}
         className="hidden sm:flex items-center gap-2 bg-obsidian-surface/90 border border-wa-green/40 backdrop-blur-md px-3.5 py-2 rounded-2xl shadow-2xl text-xs font-bold text-white cursor-pointer hover:scale-105 transition-all group"
       >
         <span className="w-2 h-2 rounded-full bg-wa-green animate-ping"></span>

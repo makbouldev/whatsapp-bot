@@ -24,6 +24,11 @@ const MainAppContent = () => {
   const [selectedQuotePack, setSelectedQuotePack] = useState('pro');
   const navigate = useNavigate();
 
+  const handleNavigatePricing = () => {
+    navigate('/pricing');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const handleOpenQuoteModal = (packId = 'pro') => {
     if (typeof packId === 'string') {
       setSelectedQuotePack(packId);
@@ -47,7 +52,7 @@ const MainAppContent = () => {
       {/* Routes setup for multi-page architecture */}
       <main className="flex-1">
         <Routes>
-          <Route path="/" element={<HomePage onOpenQuoteModal={handleOpenQuoteModal} />} />
+          <Route path="/" element={<HomePage onNavigatePricing={handleNavigatePricing} />} />
           <Route path="/simulator" element={<SimulatorPage onOpenQuoteModal={handleOpenQuoteModal} />} />
           <Route path="/features" element={<FeaturesPage onOpenQuoteModal={handleOpenQuoteModal} />} />
           <Route path="/solutions" element={<SolutionsPage onOpenQuoteModal={handleOpenQuoteModal} />} />
@@ -92,7 +97,7 @@ const MainAppContent = () => {
       <QuoteModal isOpen={isQuoteModalOpen} onClose={handleCloseQuoteModal} initialPack={selectedQuotePack} />
 
       {/* Floating Action Button */}
-      <FloatingCta onOpenQuoteModal={handleOpenQuoteModal} />
+      <FloatingCta onNavigatePricing={handleNavigatePricing} />
     </div>
   );
 };

@@ -3,13 +3,13 @@ import { Link } from 'react-router-dom';
 import { Hero } from '../components/Hero';
 import { Bot, Sparkles, MessageSquare, Play, ShieldCheck, Zap, ArrowRight, CheckCircle2, Globe } from 'lucide-react';
 
-export const HomePage = ({ onOpenQuoteModal }) => {
+export const HomePage = ({ onNavigatePricing }) => {
   return (
     <div className="space-y-16 pb-16 animate-in fade-in duration-300">
       
       {/* Sleek Hero */}
       <Hero
-        onOpenQuoteModal={onOpenQuoteModal}
+        onNavigatePricing={onNavigatePricing}
         onNavigateSimulator={() => window.location.href = '/simulator'}
       />
 
@@ -87,7 +87,7 @@ export const HomePage = ({ onOpenQuoteModal }) => {
           </div>
 
           <button
-            onClick={onOpenQuoteModal}
+            onClick={onNavigatePricing}
             className="px-8 py-4 rounded-2xl bg-wa-green hover:bg-emerald-400 text-obsidian font-extrabold text-base shadow-glow-green transition-all whitespace-nowrap"
           >
             Demander Mon Bot Gratuitement
