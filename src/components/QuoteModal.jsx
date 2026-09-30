@@ -75,10 +75,6 @@ export const QuoteModal = ({ isOpen, onClose, initialPack = 'pro' }) => {
   const [selectedPack, setSelectedPack] = useState(initialPack);
   const [selectedIndustry, setSelectedIndustry] = useState('ecommerce');
   const [selectedAddons, setSelectedAddons] = useState(['multilingual', 'google_sheets_sync']);
-  
-  const [companyName, setCompanyName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [notes, setNotes] = useState('');
 
   useEffect(() => {
     if (initialPack) {
@@ -299,50 +295,6 @@ export const QuoteModal = ({ isOpen, onClose, initialPack = 'pro' }) => {
                 ⚡ 24h Express Deployment
               </span>
             </div>
-          </div>
-
-          {/* Contact Form Inputs */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <label className="block text-[11px] font-bold text-slate-300 mb-1 uppercase">
-                Company / Brand Name
-              </label>
-              <input
-                type="text"
-                required
-                placeholder="e.g. FootLab Apparel"
-                value={companyName}
-                onChange={(e) => setCompanyName(e.target.value)}
-                className="w-full bg-obsidian-card border border-obsidian-border rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-wa-green"
-              />
-            </div>
-
-            <div>
-              <label className="block text-[11px] font-bold text-slate-300 mb-1 uppercase">
-                Your WhatsApp Number
-              </label>
-              <input
-                type="text"
-                required
-                placeholder="e.g. +1 234 567 8900"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                className="w-full bg-obsidian-card border border-obsidian-border rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-wa-green"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-[11px] font-bold text-slate-300 mb-1 uppercase">
-              Additional Requirements or Notes (Optional)
-            </label>
-            <textarea
-              rows={2}
-              placeholder="e.g. I sell shoes and clothing, I want customized prompt responses..."
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              className="w-full bg-obsidian-card border border-obsidian-border rounded-xl p-3 text-xs text-white focus:outline-none focus:border-wa-green"
-            />
           </div>
 
           {/* Dynamic Action Button: Continue (if Logged In) vs Create Account & Continue (if Not Logged In) */}
