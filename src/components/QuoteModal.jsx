@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Sparkles, Check, Send, ShoppingBag, Utensils, Building, Stethoscope, HelpCircle, Zap, ShieldCheck, DollarSign } from 'lucide-react';
 
 const packsOptions = [
@@ -74,14 +74,20 @@ const featureAddons = [
   }
 ];
 
-export const QuoteModal = ({ isOpen, onClose }) => {
-  const [selectedPack, setSelectedPack] = useState('pro');
+export const QuoteModal = ({ isOpen, onClose, initialPack = 'pro' }) => {
+  const [selectedPack, setSelectedPack] = useState(initialPack);
   const [selectedIndustry, setSelectedIndustry] = useState('ecommerce');
   const [selectedAddons, setSelectedAddons] = useState(['multilingual', 'google_sheets_sync']);
   
   const [companyName, setCompanyName] = useState('');
   const [phone, setPhone] = useState('');
   const [notes, setNotes] = useState('');
+
+  useEffect(() => {
+    if (initialPack) {
+      setSelectedPack(initialPack);
+    }
+  }, [initialPack, isOpen]);
 
   if (!isOpen) return null;
 

@@ -175,7 +175,7 @@ export const Pricing = ({ onOpenQuoteModal }) => {
 
                 {/* CTA Button */}
                 <button
-                  onClick={onOpenQuoteModal}
+                  onClick={() => onOpenQuoteModal(plan.id)}
                   className={`w-full py-3.5 px-4 rounded-xl font-extrabold text-sm transition-all flex items-center justify-center gap-2 ${
                     plan.popular
                       ? 'bg-wa-green hover:bg-emerald-400 text-obsidian shadow-glow-green'

@@ -126,7 +126,10 @@ export const Navbar = ({ onOpenQuoteModal }) => {
 
             {/* Primary Action Button */}
             <button
-              onClick={onOpenQuoteModal}
+              onClick={() => {
+                navigate('/pricing');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
               className="bg-wa-green hover:bg-emerald-400 text-obsidian font-extrabold px-4 py-2 rounded-xl shadow-glow-green hover:scale-105 transition-all text-xs flex items-center gap-1.5"
             >
               <Sparkles className="w-3.5 h-3.5 fill-obsidian" />
@@ -218,12 +221,13 @@ export const Navbar = ({ onOpenQuoteModal }) => {
             <button
               onClick={() => {
                 setMobileMenuOpen(false);
-                onOpenQuoteModal();
+                navigate('/pricing');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
               className="w-full bg-wa-green text-obsidian font-extrabold py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 shadow-glow-green"
             >
               <Sparkles className="w-4 h-4" />
-              <span>Demander Mon Bot WhatsApp</span>
+              <span>Créer Mon Bot</span>
             </button>
           </div>
         </div>

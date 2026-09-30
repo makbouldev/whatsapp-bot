@@ -21,9 +21,15 @@ import { DashboardLayout } from './dashboard/DashboardLayout';
 const MainAppContent = () => {
   const { isLoggedIn, openAuthModal } = useAuth();
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
+  const [selectedQuotePack, setSelectedQuotePack] = useState('pro');
   const navigate = useNavigate();
 
-  const handleOpenQuoteModal = () => {
+  const handleOpenQuoteModal = (packId = 'pro') => {
+    if (typeof packId === 'string') {
+      setSelectedQuotePack(packId);
+    } else {
+      setSelectedQuotePack('pro');
+    }
     setIsQuoteModalOpen(true);
   };
 
@@ -83,7 +89,7 @@ const MainAppContent = () => {
       <AuthModal onNavigateDashboard={() => navigate('/dashboard')} />
 
       {/* Quote Builder Modal */}
-      <QuoteModal isOpen={isQuoteModalOpen} onClose={handleCloseQuoteModal} />
+      <QuoteModal isOpen={isQuoteModalOpen} onClose={handleCloseQuoteModal} initialPack={selectedQuotePack} />
 
       {/* Floating Action Button */}
       <FloatingCta onOpenQuoteModal={handleOpenQuoteModal} />
