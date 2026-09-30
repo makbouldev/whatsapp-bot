@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { X, Sparkles, Check, Send, ShoppingBag, Utensils, Building, Stethoscope, HelpCircle, Zap, ShieldCheck, DollarSign } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { X, Sparkles, Check, Send, ShoppingBag, Utensils, Building, Stethoscope, HelpCircle, Zap, ShieldCheck, DollarSign, UserPlus, ArrowRight } from 'lucide-react';
 
 const packsOptions = [
   {
@@ -67,6 +69,9 @@ const featureAddons = [
 ];
 
 export const QuoteModal = ({ isOpen, onClose, initialPack = 'pro' }) => {
+  const { isLoggedIn, login, updateBotConfig } = useAuth();
+  const navigate = useNavigate();
+
   const [selectedPack, setSelectedPack] = useState(initialPack);
   const [selectedIndustry, setSelectedIndustry] = useState('ecommerce');
   const [selectedAddons, setSelectedAddons] = useState(['multilingual', 'google_sheets_sync']);
@@ -101,25 +106,40 @@ export const QuoteModal = ({ isOpen, onClose, initialPack = 'pro' }) => {
 
   const totalUsd = currentPack.priceUsd + addonsTotalUsd;
 
-  const handleSendWhatsAppQuote = (e) => {
+  const handleFormSubmit = (e) => {
     e.preventDefault();
     
     const industryObj = industryOptions.find(i => i.id === selectedIndustry);
-    const industryLabel = industryObj?.label || 'Custom';
+    const industryLabel = industryObj?.label || 'Custom Sector';
 
-    const selectedAddonsList = selectedAddons.map(id => {
-      const addon = featureAddons.find(a => a.id === id);
-      return addon ? `• ${addon.title} (+$${addon.priceUsd}/mo)` : null;
-    }).filter(Boolean).join('\n');
+    const customPrompt = selectedIndustry === 'ecommerce' 
+      ? 'You are an AI sales assistant for an E-Commerce store. Answer politely in customer language, present products, prices, and record orders.'
+      : 'You are an AI virtual assistant for a Service business. Answer politely in customer language, present services, prices, and book appointments.';
 
-    const whatsappMessage = `Hello WaBotix! 🤖 I would like to configure a custom WhatsApp AI Bot:\n\n📦 *SELECTED BASE PLAN*:\n• ${currentPack.name} ($${currentPack.priceUsd}/month)\n\n🎯 *BUSINESS SECTOR*:\n• ${industryLabel}\n\n⚙️ *SELECTED ADD-ON FEATURES*:\n${selectedAddonsList || '• No additional add-ons'}\n\n💰 *ESTIMATED TOTAL PRICE*:\n👉 *$${totalUsd}/month*\n\n🏢 *COMPANY / BRAND*: ${companyName || 'Not specified'}\n📞 *WHATSAPP*: ${phone || 'Not specified'}\n📝 *NOTES*: ${notes || 'None'}\n\nPlease contact me for immediate setup 🚀`;
+    const botConfig = {
+      name: companyName ? `Bot ${companyName}` : 'My WhatsApp Bot',
+      phone: phone || '+212 600 000 000',
+      type: `${currentPack.name} (${industryLabel})`,
+      prompt: customPrompt,
+      welcomeMessage: selectedIndustry === 'ecommerce' 
+        ? 'Hello! 👋 Welcome to our store. Which product can I help you order today?'
+        : 'Hello! 👋 Welcome. Which service or appointment would you like to book today?'
+    };
 
-    const encodedText = encodeURIComponent(whatsappMessage);
-    const targetPhoneNumber = "212661234567";
-    const waUrl = `https://wa.me/${targetPhoneNumber}?text=${encodedText}`;
-
-    window.open(waUrl, '_blank');
-    onClose();
+    if (isLoggedIn) {
+      updateBotConfig(botConfig);
+      onClose();
+      navigate('/dashboard');
+    } else {
+      login({
+        name: companyName || 'New Business Account',
+        phone: phone || '+212 600 000 000',
+        email: `${(companyName || 'client').toLowerCase().replace(/[^a-z0-9]/g, '')}@wabotix.com`
+      });
+      updateBotConfig(botConfig);
+      onClose();
+      navigate('/dashboard');
+    }
   };
 
   return (
@@ -184,7 +204,7 @@ export const QuoteModal = ({ isOpen, onClose, initialPack = 'pro' }) => {
           </div>
         </div>
 
-        <form onSubmit={handleSendWhatsAppQuote} className="space-y-6">
+        <form onSubmit={handleFormSubmit} className="space-y-6">
           
           {/* STEP 1: Industry / Sector */}
           <div>
@@ -325,14 +345,24 @@ export const QuoteModal = ({ isOpen, onClose, initialPack = 'pro' }) => {
             />
           </div>
 
-          {/* Submit WhatsApp Button */}
-          <button
-            type="submit"
-            className="w-full py-4 rounded-2xl bg-gradient-to-r from-wa-green via-emerald-400 to-wa-green text-obsidian font-black text-sm shadow-glow-green transition-all hover:scale-[1.01] flex items-center justify-center gap-2"
-          >
-            <Send className="w-4 h-4 fill-obsidian" />
-            <span>Submit Request (${totalUsd}/mo) via WhatsApp 🚀</span>
-          </button>
+          {/* Dynamic Action Button: Continue (if Logged In) vs Create Account & Continue (if Not Logged In) */}
+          {isLoggedIn ? (
+            <button
+              type="submit"
+              className="w-full py-4 rounded-2xl bg-gradient-to-r from-wa-green via-emerald-400 to-wa-green text-obsidian font-black text-sm shadow-glow-green transition-all hover:scale-[1.01] flex items-center justify-center gap-2"
+            >
+              <span>Continue to Dashboard (${totalUsd}/mo)</span>
+              <ArrowRight className="w-4 h-4 stroke-[3]" />
+            </button>
+          ) : (
+            <button
+              type="submit"
+              className="w-full py-4 rounded-2xl bg-gradient-to-r from-wa-green via-emerald-400 to-wa-green text-obsidian font-black text-sm shadow-glow-green transition-all hover:scale-[1.01] flex items-center justify-center gap-2"
+            >
+              <UserPlus className="w-4 h-4" />
+              <span>Create Account & Order (${totalUsd}/mo) 🚀</span>
+            </button>
+          )}
 
         </form>
 
