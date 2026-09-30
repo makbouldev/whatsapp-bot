@@ -11,8 +11,8 @@ export const initialSingleUserBot = {
   totalMessages: 12480,
   leadsCaptured: 890,
   conversionRate: '24.1%',
-  prompt: 'En tant qu\'assistant virtuel IA, réponds poliment dans la langue du client aux demandes de produits, prix, catalogue et livraison.',
-  welcomeMessage: 'Bonjour! 👋 Bienvenue chez nous. Comment puis-je vous aider aujourd\'hui ?'
+  prompt: 'You are a friendly, intelligent WhatsApp AI Assistant. Respond in the exact language used by the client.',
+  welcomeMessage: 'Hello! 👋 Welcome to our store. How can I help you today?'
 };
 
 export const AuthProvider = ({ children }) => {
@@ -21,6 +21,9 @@ export const AuthProvider = ({ children }) => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authModalMode, setAuthModalMode] = useState('login');
   
+  // Pending Bot Order Configuration saved from QuoteModal
+  const [pendingBotOrder, setPendingBotOrder] = useState(null);
+
   // Each user has EXACTLY 1 dedicated WhatsApp bot
   const [userBot, setUserBot] = useState(initialSingleUserBot);
   const [activeDashboardTab, setActiveDashboardTab] = useState('overview');
@@ -34,28 +37,34 @@ export const AuthProvider = ({ children }) => {
     setIsAuthModalOpen(false);
   };
 
+  const savePendingBotOrder = (orderData) => {
+    setPendingBotOrder(orderData);
+  };
+
   const login = (userData) => {
+    const userName = userData?.name || 'Noureddine Agency';
+
     setUser({
-      name: userData?.name || 'Noureddine Agency',
+      name: userName,
       email: userData?.email || 'contact@noureddine.ma',
       phone: userData?.phone || '+212 661 234 567',
-      plan: 'Business Pro Bot',
+      plan: pendingBotOrder?.planName || 'Business Pro Bot',
       avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=150',
-      company: userData?.name || 'Noureddine Digital'
+      company: userName
     });
 
-    // Assign 1 dedicated bot to this specific logged-in user
+    // Assign 1 dedicated bot with saved order configuration if available
     setUserBot({
       id: `bot-${Date.now()}`,
-      name: `Bot WhatsApp de ${userData?.name || 'Mon Entreprise'}`,
+      name: `Bot WhatsApp de ${userName}`,
       phone: userData?.phone || '+212 661 234 567',
       status: 'active',
-      type: 'WhatsApp AI Assistant 24/7',
-      totalMessages: 3420,
-      leadsCaptured: 245,
-      conversionRate: '24.1%',
-      prompt: 'En tant qu\'assistant virtuel IA, réponds poliment dans la langue du client aux demandes de produits, prix et livraison.',
-      welcomeMessage: 'Bonjour! 👋 Bienvenue chez nous. Comment puis-je vous aider ?'
+      type: pendingBotOrder ? `${pendingBotOrder.planName} (${pendingBotOrder.sectorLabel})` : 'WhatsApp AI Assistant 24/7',
+      totalMessages: 0,
+      leadsCaptured: 0,
+      conversionRate: '0%',
+      prompt: pendingBotOrder?.prompt || 'You are a friendly, intelligent WhatsApp AI Assistant. Respond in the exact language used by the client.',
+      welcomeMessage: pendingBotOrder?.welcomeMessage || 'Hello! 👋 Welcome to our store. How can I help you today?'
     });
 
     setIsLoggedIn(true);
@@ -65,6 +74,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
     setIsLoggedIn(false);
+    setPendingBotOrder(null);
   };
 
   const toggleBotStatus = () => {
@@ -91,6 +101,8 @@ export const AuthProvider = ({ children }) => {
         userBot, // Single dedicated bot for the user
         bots: [userBot], // Array accessor for backwards compatibility
         activeDashboardTab,
+        pendingBotOrder,
+        savePendingBotOrder,
         setActiveDashboardTab,
         openAuthModal,
         closeAuthModal,

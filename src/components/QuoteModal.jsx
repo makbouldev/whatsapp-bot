@@ -69,7 +69,7 @@ const featureAddons = [
 ];
 
 export const QuoteModal = ({ isOpen, onClose, initialPack = 'pro' }) => {
-  const { isLoggedIn, login, updateBotConfig } = useAuth();
+  const { isLoggedIn, login, updateBotConfig, savePendingBotOrder, openAuthModal } = useAuth();
   const navigate = useNavigate();
 
   const [selectedPack, setSelectedPack] = useState(initialPack);
@@ -112,10 +112,13 @@ export const QuoteModal = ({ isOpen, onClose, initialPack = 'pro' }) => {
       ? 'You are an AI sales assistant for an E-Commerce store. Answer politely in customer language, present products, prices, and record orders.'
       : 'You are an AI virtual assistant for a Service business. Answer politely in customer language, present services, prices, and book appointments.';
 
-    const botConfig = {
-      name: companyName ? `Bot ${companyName}` : 'My WhatsApp Bot',
-      phone: phone || '+212 600 000 000',
-      type: `${currentPack.name} (${industryLabel})`,
+    const orderData = {
+      planId: selectedPack,
+      planName: currentPack.name,
+      sectorId: selectedIndustry,
+      sectorLabel: industryLabel,
+      addons: selectedAddons,
+      totalUsd: totalUsd,
       prompt: customPrompt,
       welcomeMessage: selectedIndustry === 'ecommerce' 
         ? 'Hello! 👋 Welcome to our store. Which product can I help you order today?'
@@ -123,18 +126,18 @@ export const QuoteModal = ({ isOpen, onClose, initialPack = 'pro' }) => {
     };
 
     if (isLoggedIn) {
-      updateBotConfig(botConfig);
+      updateBotConfig({
+        type: `${currentPack.name} (${industryLabel})`,
+        prompt: orderData.prompt,
+        welcomeMessage: orderData.welcomeMessage
+      });
       onClose();
       navigate('/dashboard');
     } else {
-      login({
-        name: companyName || 'New Business Account',
-        phone: phone || '+212 600 000 000',
-        email: `${(companyName || 'client').toLowerCase().replace(/[^a-z0-9]/g, '')}@wabotix.com`
-      });
-      updateBotConfig(botConfig);
+      // Save order config in memory context, close QuoteModal, and open AuthModal in 'signup' mode!
+      savePendingBotOrder(orderData);
       onClose();
-      navigate('/dashboard');
+      openAuthModal('signup');
     }
   };
 
@@ -297,7 +300,7 @@ export const QuoteModal = ({ isOpen, onClose, initialPack = 'pro' }) => {
             </div>
           </div>
 
-          {/* Dynamic Action Button: Continue (if Logged In) vs Create Account & Continue (if Not Logged In) */}
+          {/* Dynamic Action Button: Continue (if Logged In) vs Create Account & Order (if Not Logged In) */}
           {isLoggedIn ? (
             <button
               type="submit"

@@ -1,15 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { X, LogIn, UserPlus, Sparkles, Lock, Mail, User, Phone, ArrowRight, ShieldCheck } from 'lucide-react';
+import { X, LogIn, UserPlus, Sparkles, Lock, Mail, User, Phone, ArrowRight, ShieldCheck, Zap } from 'lucide-react';
 
 export const AuthModal = ({ onNavigateDashboard }) => {
-  const { isAuthModalOpen, closeAuthModal, authModalMode, login } = useAuth();
+  const { isAuthModalOpen, closeAuthModal, authModalMode, login, pendingBotOrder } = useAuth();
   const [mode, setMode] = useState(authModalMode || 'login');
   
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
+
+  useEffect(() => {
+    if (authModalMode) {
+      setMode(authModalMode);
+    }
+  }, [authModalMode, isAuthModalOpen]);
 
   if (!isAuthModalOpen) return null;
 
@@ -75,25 +81,48 @@ export const AuthModal = ({ onNavigateDashboard }) => {
           </button>
         </div>
 
-        {/* 1-Click Instant Demo Login Banner */}
-        <div className="p-3.5 rounded-2xl bg-gradient-to-r from-wa-teal/40 to-obsidian border border-wa-green/40 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-wa-green/20 flex items-center justify-center">
-              <Sparkles className="w-4 h-4 text-wa-green" />
+        {/* Configured Bot Pending Order Banner */}
+        {pendingBotOrder ? (
+          <div className="p-3.5 rounded-2xl bg-wa-green/10 border border-wa-green/40 flex items-center justify-between gap-3 shadow-glow-green">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-wa-green/20 border border-wa-green/50 flex items-center justify-center shrink-0">
+                <Zap className="w-4 h-4 text-wa-green" />
+              </div>
+              <div>
+                <p className="text-xs font-black text-white">
+                  Configured Bot ({pendingBotOrder.planName})
+                </p>
+                <p className="text-[10px] font-bold text-wa-green">
+                  ${pendingBotOrder.totalUsd}/month • {pendingBotOrder.sectorLabel}
+                </p>
+              </div>
             </div>
-            <div>
-              <p className="text-xs font-bold text-white">Tester l'Espace Client immédiat</p>
-              <p className="text-[10px] text-slate-300">Accédez au Dashboard sans inscription</p>
-            </div>
-          </div>
 
-          <button
-            onClick={handleDemoLogin}
-            className="px-3.5 py-2 rounded-xl bg-wa-green hover:bg-emerald-400 text-obsidian text-xs font-extrabold shadow-glow-green transition-all whitespace-nowrap"
-          >
-            Connexion 1-Clic 🚀
-          </button>
-        </div>
+            <span className="text-[10px] bg-wa-green text-obsidian font-extrabold px-2.5 py-1 rounded-lg">
+              Saved 🚀
+            </span>
+          </div>
+        ) : (
+          /* 1-Click Instant Demo Login Banner */
+          <div className="p-3.5 rounded-2xl bg-gradient-to-r from-wa-teal/40 to-obsidian border border-wa-green/40 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-wa-green/20 flex items-center justify-center">
+                <Sparkles className="w-4 h-4 text-wa-green" />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-white">Tester l'Espace Client immédiat</p>
+                <p className="text-[10px] text-slate-300">Accédez au Dashboard sans inscription</p>
+              </div>
+            </div>
+
+            <button
+              onClick={handleDemoLogin}
+              className="px-3.5 py-2 rounded-xl bg-wa-green hover:bg-emerald-400 text-obsidian text-xs font-extrabold shadow-glow-green transition-all whitespace-nowrap"
+            >
+              Connexion 1-Clic 🚀
+            </button>
+          </div>
+        )}
 
         {/* Auth Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
