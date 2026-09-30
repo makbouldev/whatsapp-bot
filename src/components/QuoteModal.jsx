@@ -152,61 +152,58 @@ export const QuoteModal = ({ isOpen, onClose, initialPack = 'pro' }) => {
         <div className="space-y-1.5 pr-8">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-wa-green/10 border border-wa-green/30 text-wa-green text-xs font-extrabold uppercase tracking-wider">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Calculateur De Devis En Direct</span>
+            <span>Personnalisation De Votre Bot</span>
           </div>
-          <h3 className="text-2xl font-extrabold text-white">Configurez Votre Bot WhatsApp</h3>
+          <h3 className="text-2xl font-extrabold text-white">Sélectionnez Vos Options & Secteur</h3>
           <p className="text-xs text-slate-300">
-            Choisissez votre pack de base, sélectionnez votre secteur et vos options à la carte.
+            Personnalisez les fonctionnalités de votre Bot WhatsApp selon les besoins de votre activité.
           </p>
+        </div>
+
+        {/* Selected Base Pack Banner Card */}
+        <div className="p-4 rounded-2xl bg-wa-green/10 border border-wa-green/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-glow-green">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-wa-green/20 border border-wa-green/50 flex items-center justify-center shrink-0">
+              <Zap className="w-5 h-5 text-wa-green" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-bold text-slate-300 uppercase tracking-wider">Pack Choisi :</span>
+                <span className="text-xs font-extrabold text-wa-green bg-wa-green/20 px-2.5 py-0.5 rounded-full border border-wa-green/30">
+                  {currentPack.name}
+                </span>
+              </div>
+              <p className="text-xs font-extrabold text-white mt-0.5">
+                ${currentPack.priceUsd} <span className="text-slate-400 font-semibold text-[11px]">/ mois</span> ({currentPack.priceDh} DH / mois)
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-1.5 self-end sm:self-auto">
+            <span className="text-[10px] text-slate-400 font-semibold mr-1">Changer :</span>
+            {packsOptions.map(p => (
+              <button
+                key={p.id}
+                type="button"
+                onClick={() => setSelectedPack(p.id)}
+                className={`px-2.5 py-1 rounded-lg text-[10px] font-extrabold border transition-all ${
+                  selectedPack === p.id
+                    ? 'bg-wa-green text-obsidian border-wa-green font-black shadow-sm'
+                    : 'bg-obsidian-card border-obsidian-border text-slate-400 hover:text-white'
+                }`}
+              >
+                {p.name.replace('Pack ', '')}
+              </button>
+            ))}
+          </div>
         </div>
 
         <form onSubmit={handleSendWhatsAppQuote} className="space-y-6">
           
-          {/* STEP 1: Select Pack */}
-          <div>
-            <label className="block text-xs font-extrabold text-wa-green mb-2.5 uppercase tracking-wider flex items-center gap-1.5">
-              <span>1. Choisissez Votre Pack De Base (3 Packs)</span>
-            </label>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {packsOptions.map((pack) => {
-                const isSelected = selectedPack === pack.id;
-                return (
-                  <button
-                    key={pack.id}
-                    type="button"
-                    onClick={() => setSelectedPack(pack.id)}
-                    className={`relative p-3.5 rounded-2xl border text-left transition-all flex flex-col justify-between ${
-                      isSelected
-                        ? 'bg-wa-green/10 border-wa-green shadow-glow-green ring-1 ring-wa-green'
-                        : 'bg-obsidian-card border-obsidian-border hover:border-slate-600'
-                    }`}
-                  >
-                    {pack.popular && (
-                      <span className="absolute -top-2.5 right-3 bg-wa-green text-obsidian text-[10px] font-extrabold px-2 py-0.5 rounded-full shadow-sm">
-                        RECOMMANDÉ
-                      </span>
-                    )}
-
-                    <div>
-                      <span className="text-xs font-extrabold text-white block">{pack.name}</span>
-                      <p className="text-[10px] text-slate-400 mt-1 line-clamp-2">{pack.description}</p>
-                    </div>
-
-                    <div className="mt-3 pt-2 border-t border-obsidian-border/50 flex items-baseline justify-between">
-                      <span className="text-lg font-extrabold text-wa-green">${pack.priceUsd} <span className="text-[10px] text-slate-400">/m</span></span>
-                      <span className="text-[11px] font-bold text-slate-300">{pack.priceDh} DH</span>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* STEP 2: Industry / Sector */}
+          {/* STEP 1: Industry / Sector */}
           <div>
             <label className="block text-xs font-extrabold text-wa-green mb-2.5 uppercase tracking-wider">
-              2. Votre Secteur D'activité
+              1. Votre Secteur D'activité
             </label>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -219,7 +216,7 @@ export const QuoteModal = ({ isOpen, onClose, initialPack = 'pro' }) => {
                     onClick={() => setSelectedIndustry(ind.id)}
                     className={`p-2.5 rounded-xl border text-left text-xs font-bold transition-all flex items-center justify-between ${
                       isSelected
-                        ? 'bg-wa-green/15 border-wa-green text-wa-green font-extrabold'
+                        ? 'bg-wa-green/15 border-wa-green text-wa-green font-extrabold shadow-sm'
                         : 'bg-obsidian-card border-obsidian-border text-slate-300 hover:border-slate-600'
                     }`}
                   >
@@ -231,11 +228,11 @@ export const QuoteModal = ({ isOpen, onClose, initialPack = 'pro' }) => {
             </div>
           </div>
 
-          {/* STEP 3: Add-on Features with exact prices ($2, $4, $2, $2, $3) */}
+          {/* STEP 2: Add-on Features with exact prices ($2, $4, $2, $2, $3) */}
           <div>
             <div className="flex items-center justify-between mb-2.5">
               <label className="block text-xs font-extrabold text-wa-green uppercase tracking-wider">
-                3. Options À La Carte (Sélectionnez selon vos besoins)
+                2. Options À La Carte (Sélectionnez selon vos besoins)
               </label>
               <span className="text-[10px] text-slate-400 font-bold">Prix ajouts par mois</span>
             </div>
