@@ -1,0 +1,12 @@
+services:
+  backend:
+    build: .
+    container_name: wabotix-backend
+    restart: always
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    volumes:
+      - ./baileys_auth_info:/app/baileys_auth_info
